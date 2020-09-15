@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import SwaggerParser from "@apidevtools/swagger-parser";
-import { InputGroup, ControlGroup, FormGroup, Button, Callout } from "@blueprintjs/core";
+import { InputGroup, ControlGroup, FormGroup, Button, Card, Tag } from "@blueprintjs/core";
 import Swagger from '../interfaces/Swagger';
 import Toaster from './Toaster';
 
@@ -74,15 +74,20 @@ export default function SwaggerInput() {
                 Object.values(schema.paths).map((e: any, key: number) => (
                     e[operation] ? (
                         <div key={key}>
-                            <Callout title={e[operation].operationId}>
+                            <Card>
+                                <h3>
+                                    {e[operation].operationId}
+                                    &nbsp;
+                                    <Tag intent="success">{operation.toUpperCase()}</Tag>
+                                </h3>
                                 {e[operation].description}
-                            </Callout>
+                                {e[operation].summary}
+                            </Card>
                             <br/>
                         </div>
                     ) : null
-                )
-            ))
-            )}
+                ))
+            ))}
         </div> : null}
         </div>
     )
