@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-//import SwaggerParser from "@apidevtools/swagger-parser";
 import { FileInput, Button, ControlGroup, FormGroup, Callout} from "@blueprintjs/core";
 
 export default function FileUploader() {
@@ -22,23 +21,24 @@ export default function FileUploader() {
       fileReader.onload = () => setFileContents(String(fileReader.result));
     }
 
+
     return (
         <div>
             <form onSubmit={handleSubmit}>
                 <FormGroup label="Upload Swagger 2.0 or OpenAPI 3.0 Schema File">
                 <ControlGroup>
                     <FileInput 
-                    hasSelection={fileSelected} 
-                    text={file.name}
-                    onInputChange={handleChange} 
-                    inputProps={{accept:".json, .yml"}}
-                    disabled={fileSubmitted}
+                        hasSelection={fileSelected} 
+                        text={file.name}
+                        onInputChange={handleChange} 
+                        inputProps={{accept:".json, .yml, .yaml"}}
+                        disabled={fileSubmitted}
                     />
                     <br/>
                     <Button 
-                    type="submit" 
-                    intent="primary"
-                    disabled={fileSubmitted}
+                        type="submit" 
+                        intent="primary"
+                        disabled={fileSubmitted}
                     >
                     Upload File
                     </Button>
@@ -46,10 +46,10 @@ export default function FileUploader() {
                 </FormGroup>
             </form>
             {fileSubmitted?(
-                <Callout>
-                <pre>
-                    {fileContents}
-                </pre>
+                <Callout icon="code" title="File Contents">
+                    <pre>
+                        {fileContents}
+                    </pre>
                 </Callout>
             ) : null}
         </div>

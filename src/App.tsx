@@ -1,13 +1,13 @@
 import React from 'react';
 import { Container } from 'react-grid-system';
-import FileUploader from './components/FileUploader';
+import SwaggerInput from './components/SwaggerInput';
 
 const App = () => (
   <Container>
     <h1>
       Rest Tester
     </h1>
-    <FileUploader/>
+    <SwaggerInput/>
   </Container>
 )
 
