@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Dialog, ControlGroup, HTMLSelect, InputGroup, Classes, Callout, HTMLTable } from "@blueprintjs/core";
+import { Dialog, ControlGroup, HTMLSelect, InputGroup, Classes, Callout, HTMLTable, Icon } from "@blueprintjs/core";
 import { path_item } from '../interfaces/Swagger';
 
 interface IProps {
@@ -29,46 +29,60 @@ export default function EndpointDialog(props: IProps) {
                     </HTMLSelect>
                     <InputGroup fill type="text" value={props.endpoint}/>
                 </ControlGroup>
-                {Object.values(props.path).map((path: any, index: number) => {
-                    return (Object.keys(props.path)[index] === selected)?(
+                {Object.values(props.path).map((path: any, index: number) => (
+                    Object.keys(props.path)[index] === selected)?(
                         <div>
                             <h3>Description</h3>
                             <Callout>{path.description?path.description:"No description"}</Callout>
-                            <h3>Parameters</h3>
+                            {path.parameters?(<>
+                                <h3>Parameters</h3>
+                                <Callout>
+                                    <HTMLTable style={{width:"100%"}}>
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <td>Description</td>
+                                                <td>Type</td>
+                                                <td>Required</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {Object.values(path.parameters).map((param: any, index: number) => (
+                                                <tr key={index}>
+                                                    <td>{param.name}</td>
+                                                    <td>{param.description}</td>
+                                                    <td>{param.type}</td>
+                                                    <td style={{textAlign:'center'}}>
+                                                        <Icon icon={param.required?"tick":"cross"}/>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </HTMLTable>
+                                </Callout>
+                            </>):null}
+                            <h3>Responses</h3>
                             <Callout>
-                            <HTMLTable style={{width:"100%"}}>
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <td>Description</td>
-                                        <td>Type</td>
-                                        <td>Required</td>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {path.parameters?Object.values(path.parameters).map((param: any, index: number) => (
-                                        <tr key={index}>
-                                            <td>{param.name}</td>
-                                            <td>{param.description}</td>
-                                            <td>{param.type}</td>
-                                            <td>{String(param.required)}</td>
-                                        </tr>
-                                    )):(
+                                <HTMLTable style={{width:"100%"}}>
+                                    <thead>
                                         <tr>
-                                            <td>Undefined</td>
-                                            <td>Undefined</td>
-                                            <td>Undefined</td>
-                                            <td>Undefined</td>
+                                            <th>Code</th>
+                                            <td>Description</td>
                                         </tr>
-                                    )}
-                                </tbody>
-                            </HTMLTable>
+                                    </thead>
+                                    <tbody>
+                                        {Object.values(path.responses).map((response: any, index: number) => (
+                                            <tr key={index}>
+                                                <td>{Object.keys(path.responses)[index]}</td>
+                                                <td>{response.description}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </HTMLTable>
                             </Callout>
                         </div>
                     ) : undefined
-                })}
-                
-            
+                )}
             </div>
         </Dialog>
     )
