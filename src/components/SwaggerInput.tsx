@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import SwaggerParser from "@apidevtools/swagger-parser";
-import { InputGroup, ControlGroup, FormGroup, Button, Card, Tag, H3, H5, Intent } from "@blueprintjs/core";
+import { InputGroup, ControlGroup, FormGroup, Button, H3 } from "@blueprintjs/core";
 import Swagger from '../interfaces/Swagger';
 import Toaster from './Toaster';
+import EndpointCard from './EndpointCard';
 
 const emptySwagger: Swagger = {
     swagger: "",
@@ -13,22 +14,8 @@ const emptySwagger: Swagger = {
     paths: {}
 };
 
-interface IOperationHash {
-    [operation: string]: Intent,
-}
-
-const operationHash: IOperationHash = {
-    "get": "success",
-    "put": "warning",
-    "post": "primary",
-    "delete": "danger",
-    "options": "none",
-    "head": "none",
-    "patch": "warning",
-}
-
 export default function SwaggerInput() {
-    let [schemaURL, setSchemaURL] = useState("https://api.apis.guru/v2/specs/getsandbox.com/v1/swagger.yaml");
+    let [schemaURL, setSchemaURL] = useState("https://api.apis.guru/v2/specs/6-dot-authentiqio.appspot.com/6/swagger.yaml");
     let [schema, setSchema] = useState(emptySwagger);
     let [error, setError] = useState(false);
     let [loading, setLoading] = useState(false);
@@ -86,23 +73,7 @@ export default function SwaggerInput() {
                 </H3>
                     {Object.values(schema.paths).map((path: any, index: number) => (
                         <div key={index}>
-                            <Card>
-                                <H5>
-                                    {Object.keys(schema.paths)[index]}
-                                    &nbsp;
-                                    {Object.keys(path).map((operation: any) => (
-                                        operationHash[operation]?(<>
-                                            <Tag intent={operationHash[operation]}>{operation.toUpperCase()}</Tag>
-                                            &nbsp;
-                                        </>):null
-                                    ))}
-                                </H5>
-                                {Object.values(path).map((operation: any) => (
-                                    <div>
-                                        {operation.description}
-                                    </div>
-                                ))}
-                            </Card>
+                            <EndpointCard path={path} endpoint={Object.keys(schema.paths)[index]}/>
                             <br/>
                         </div>
                     ))}

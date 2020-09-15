@@ -45,7 +45,7 @@ interface paths {
     [path: string]: path_item,
 }
 
-interface path_item {
+export interface path_item {
     $ref?: string,
     get?: operation,
     put?: operation,

@@ -15,7 +15,7 @@ const App = () => {
   return (
     <div className={darkTheme?Classes.DARK:undefined}>
       {document.getElementsByTagName("body")[0]
-      .setAttribute("style", `background-color: ${darkTheme?Colors.DARK_GRAY4:Colors.WHITE}`)}
+      .setAttribute("style", `background-color: ${darkTheme?Colors.DARK_GRAY5:Colors.LIGHT_GRAY5}`)}
       <Container>
         <Row>
           <Col>
