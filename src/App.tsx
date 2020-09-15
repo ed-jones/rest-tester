@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Container, Row, Col } from 'react-grid-system';
 import SwaggerInput from './components/SwaggerInput';
-import { Alignment, Classes, Colors, Switch } from "@blueprintjs/core";
+import { Alignment, Classes, Colors, Switch, Icon } from "@blueprintjs/core";
 
 const App = () => {
   let rehydratedDarkTheme = sessionStorage.getItem("darkTheme")==='true' || false;
@@ -20,7 +20,7 @@ const App = () => {
         <Row>
           <Col>
             <h1>
-                Rest Tester
+                <Icon iconSize={32} icon="lab-test"/> REST Tester
             </h1>
           </Col>
           <Col>

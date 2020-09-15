@@ -24,24 +24,19 @@ export const operationHash: IOperationHash = {
 export default function EndpointCard(props: IProps) {
     let [isOpen, setOpen] = useState(false);
 
-    function openDialog() {
-        console.log("open dialog");
-        setOpen(true);
-    }
-
     return (
         <div>
-            <Card interactive onClick={openDialog}>
+            <Card interactive onClick={() => setOpen(true)}>
                 <H5>
                     {props.endpoint}
                 </H5>
-                {Object.keys(props.path).map((operation: any) => (
-                    operationHash[operation]?(<>
+                {Object.keys(props.path).map((operation: any, key: number) => (
+                    operationHash[operation]?(<span key={key}>
                         <Tag 
                             intent={operationHash[operation]}
                         >{operation.toUpperCase()}</Tag>
                         &nbsp;
-                    </>):null
+                    </span>):null
                 ))}
 
             </Card>
