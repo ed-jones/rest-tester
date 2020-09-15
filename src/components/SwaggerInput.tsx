@@ -91,10 +91,10 @@ export default function SwaggerInput() {
                                     {Object.keys(schema.paths)[index]}
                                     &nbsp;
                                     {Object.keys(path).map((operation: any) => (
-                                        <>
+                                        operationHash[operation]?(<>
                                             <Tag intent={operationHash[operation]}>{operation.toUpperCase()}</Tag>
                                             &nbsp;
-                                        </>
+                                        </>):null
                                     ))}
                                 </H5>
                                 {Object.values(path).map((operation: any) => (
