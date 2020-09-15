@@ -1,21 +1,41 @@
-import React from 'react';
-import { Container } from 'react-grid-system';
+import React, { useState } from 'react';
+import { Container, Row, Col } from 'react-grid-system';
 import SwaggerInput from './components/SwaggerInput';
-import { Classes, Colors } from "@blueprintjs/core";
+import { Alignment, Classes, Colors, Switch } from "@blueprintjs/core";
 
 const App = () => {
-  let dark_theme: boolean = true;
+  let rehydratedDarkTheme = sessionStorage.getItem("darkTheme")==='true' || false;
+  let [darkTheme, setDarkTheme] = useState(rehydratedDarkTheme);
 
-  if (dark_theme) {
-    document.getElementsByTagName("body")[0].setAttribute("style", `background-color: ${Colors.DARK_GRAY4}`)
+  function toggleDarkTheme() {
+    sessionStorage.setItem('darkTheme', String(!darkTheme));
+    setDarkTheme(!darkTheme)
   }
 
   return (
-    <div className={dark_theme?Classes.DARK:undefined}>
+    <div className={darkTheme?Classes.DARK:undefined}>
+      {document.getElementsByTagName("body")[0]
+      .setAttribute("style", `background-color: ${darkTheme?Colors.DARK_GRAY4:Colors.WHITE}`)}
       <Container>
-        <h1>
-          Rest Tester
-        </h1>
+        <Row>
+          <Col>
+            <h1>
+                Rest Tester
+            </h1>
+          </Col>
+          <Col>
+            <br/>
+            <Switch 
+              onClick={toggleDarkTheme}
+              innerLabel="Light"
+              innerLabelChecked="Dark"
+              defaultChecked={darkTheme}
+              style={{float:"right"}}
+              label="Theme"
+              alignIndicator={Alignment.RIGHT}
+            />
+          </Col>
+        </Row>
         <SwaggerInput/>
       </Container>
     </div>
