@@ -1,17 +1,41 @@
 import React, { useState } from 'react'
 import SwaggerParser from "@apidevtools/swagger-parser";
-import { InputGroup, ControlGroup, FormGroup, Button, Toaster } from "@blueprintjs/core";
+import { InputGroup, ControlGroup, FormGroup, Button, Callout } from "@blueprintjs/core";
+import Swagger from '../interfaces/Swagger';
+import Toaster from './Toaster';
 
-const TOASTER = Toaster.create();
+const emptySwagger: Swagger = {
+    swagger: "",
+    info: {
+        title: "",
+        version: "",
+    },
+    paths: {}
+};
 
 export default function SwaggerInput() {
-    let [schemaURL, setSchemaURL] = useState("");
+    let [schemaURL, setSchemaURL] = useState("https://api.apis.guru/v2/specs/apiz.ebay.com/sell-finances/1.4.0/openapi.yaml");
+    let [schema, setSchema] = useState(emptySwagger);
+    let [error, setError] = useState(false);
+    let [loading, setLoading] = useState(false);
 
     function handleSubmit(event: any) {
         event.preventDefault();
-        SwaggerParser.parse(schemaURL)
-        .then(e => TOASTER.show({message: "Successfully Validated", intent: "success", icon: "tick-circle"}))
-        .catch(e => TOASTER.show({message: e.message, intent: "danger", icon: "warning-sign"}));
+        setLoading(true);
+        setSchema(emptySwagger);
+        SwaggerParser.validate(schemaURL)
+        .then(e => {
+            Toaster.show({message: "Successfully Validated", intent: "success", icon: "tick-circle"});
+            setSchema(e);
+            console.log(e);
+            setError(false);
+            setLoading(false);
+        })
+        .catch(e => {
+            Toaster.show({message: e.message, intent: "danger", icon: "error", onDismiss: () => setError(false)});
+            setError(true);
+            setLoading(false);
+        });
     }
 
     function handleChange(event: any) {
@@ -19,8 +43,9 @@ export default function SwaggerInput() {
     }
 
     return (
+        <div>
         <form onSubmit={handleSubmit}>
-            <FormGroup label="Swagger 2.0 or OpenAPI 3.0 Schema">
+            <FormGroup label="Input URL for Swagger 2.0 or OpenAPI 3.0 Schema">
                 <ControlGroup>
                     <InputGroup 
                         type="text"
@@ -28,9 +53,11 @@ export default function SwaggerInput() {
                         value={schemaURL}
                         onChange={handleChange}
                         fill
+                        intent={error?"danger":schema !== emptySwagger?"success":"none"}
                     />
                     <Button 
-                        intent="success" 
+                        intent="success"
+                        loading={loading}
                         text="Validate"
                         icon="tick"
                         type="submit"
@@ -38,5 +65,25 @@ export default function SwaggerInput() {
                 </ControlGroup>
             </FormGroup>
         </form>
+        {schema !== emptySwagger ? 
+        <div>
+            <h2>
+                {schema.info.title}
+            </h2>
+            {["get", "put", "post", "delete", "options", "head", "patch"].map((operation: string) => (
+                Object.values(schema.paths).map((e: any, key: number) => (
+                    e[operation] ? (
+                        <div key={key}>
+                            <Callout title={e[operation].operationId}>
+                                {e[operation].description}
+                            </Callout>
+                            <br/>
+                        </div>
+                    ) : null
+                )
+            ))
+            )}
+        </div> : null}
+        </div>
     )
 }
