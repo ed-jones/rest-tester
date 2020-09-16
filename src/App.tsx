@@ -25,6 +25,7 @@ const App = () => {
           </Col>
           <Col>
             <br/>
+            <br/>
             <Switch 
               onClick={toggleDarkTheme}
               innerLabel="Light"
