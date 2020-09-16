@@ -21,7 +21,11 @@ export default function EndpointDialog(props: IProps) {
     let rehydratedDarkTheme = sessionStorage.getItem("darkTheme")==='true' || false;
 
     function handleRunTests() {
-        setVisiblePanel(Panels.EndpointTests)
+        setVisiblePanel(Panels.EndpointTests);
+    }
+
+    function handleCancelTests() {
+        setVisiblePanel(Panels.EndpointDetails);
     }
 
     return (
@@ -35,7 +39,7 @@ export default function EndpointDialog(props: IProps) {
             {visiblePanel===Panels.EndpointDetails?(
                 <EndpointDetails {...props} handleRunTests={handleRunTests} />
             ):visiblePanel===Panels.EndpointTests?(
-                <EndpointTests/>
+                <EndpointTests handleCancelTests={handleCancelTests}/>
             ):null}
         </Dialog>
     )

@@ -17,26 +17,20 @@ const App = () => {
       {document.getElementsByTagName("body")[0]
       .setAttribute("style", `background-color: ${darkTheme?Colors.DARK_GRAY5:Colors.LIGHT_GRAY5}`)}
       <Container>
-        <Row>
-          <Col>
+        <div style={{display:'flex',alignItems:'center'}}>
             <h1>
                 <Icon iconSize={32} icon="lab-test"/> REST Tester
             </h1>
-          </Col>
-          <Col>
-            <br/>
-            <br/>
             <Switch 
               onClick={toggleDarkTheme}
               innerLabel="Light"
               innerLabelChecked="Dark"
               defaultChecked={darkTheme}
-              style={{float:"right"}}
+              style={{margin:"0 0 0 auto"}} 
               label="Theme"
               alignIndicator={Alignment.RIGHT}
             />
-          </Col>
-        </Row>
+          </div>
         <SwaggerInput/>
       </Container>
     </div>
