@@ -81,7 +81,10 @@ export interface parameter {
     name: string,
     in: string,
     description?: string,
-    required?: boolean
+    required?: boolean,
+    type?: string,
+    max?: number,
+    min?: number,
 }
 
 export interface reference {
