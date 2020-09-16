@@ -15,7 +15,7 @@ const emptySwagger: Swagger = {
 };
 
 export default function SwaggerInput() {
-    let [schemaURL, setSchemaURL] = useState("https://api.apis.guru/v2/specs/6-dot-authentiqio.appspot.com/6/swagger.yaml");
+    let [schemaURL, setSchemaURL] = useState("https://api.apis.guru/v2/specs/bbc.co.uk/1.0.0/swagger.yaml");
     let [schema, setSchema] = useState(emptySwagger);
     let [error, setError] = useState(false);
     let [loading, setLoading] = useState(false);

@@ -18,25 +18,51 @@ export default function EndpointTests(props: IProps) {
     let testParameters = JSON.parse(sessionStorage.getItem('settings') as string);
     operation = operation.toUpperCase();
 
-    function generateQueryParam(param: parameter) {
-        if (!param.required && Math.round(Math.random())===1) {
+    function generateParam(param: parameter) {
+        if (!param.required && generateRandomBoolean()) {
             return "";
         }
+
+        let max = param.max||testParameters?.maxNum||1000000;
+        let min = param.min||testParameters?.minNum||-1000000;
+
         switch(param.type) {
-            case "string":
-                let [max, min] = [param.max||testParameters.maxStr, param.min||testParameters.minStr];
-                return generateRandomString(max, min);
             case "number":
+                return generateRandomNumber(max, min);
             case "integer":
+                return Math.round(generateRandomNumber(max, min));
             case "boolean":
+                return generateRandomBoolean();
             case "array":
+                return; // !TODO
             case "object":
+                return; // !TODO
+            default:
+                max = param.max||testParameters?.maxStr||32;
+                min = param.min||testParameters?.minStr||0;
+                return generateRandomString(max, min);
         }
     }
 
-    function generateRandomString(max: number, min: number) {
-        let randomLength = Math.random() * (max - min) + min;
-        return Math.random().toString(36).substr(2, randomLength);
+    function generateRandomBoolean(): boolean {
+        return Math.round(Math.random())===1;
+    }
+
+    function generateRandomNumber(max: number, min: number): number {
+        return Math.random() * (max - min) + min;
+    }
+
+    function generateRandomString(max: number, min: number): string {
+        let randomLength = generateRandomNumber(max, min);
+        let randomString = "";
+        [...Array(Math.round(randomLength))].forEach(() => {
+            randomString += generateRandomChar();
+        })
+        return randomString;
+    }
+
+    function generateRandomChar(): string {
+        return Math.random().toString(36).substr(2, 1);
     }
 
     return (
@@ -58,16 +84,12 @@ export default function EndpointTests(props: IProps) {
             <br/>
             <Callout style={{height:"250px", overflowY: "scroll"}}>
                 <ul style={{listStyle:"none", padding:0, margin:0}}>
-                    <li>
-                        Generating an integer value between {testParameters.minNum} and {testParameters.maxNum}
-                    </li>
-                    
                     {[...Array(10)].map(() => (
                         <li>
                         {operation} {completeURL}
                         {operationObj.parameters?.map((param: parameter|reference) => (
                             (param as parameter).in==="query"?(
-                                `?${(param as parameter).name}=${generateQueryParam(param as parameter)}`
+                                `?${(param as parameter).name}=${generateParam(param as parameter)}`
                             ):undefined
                         ))}
                         </li>
