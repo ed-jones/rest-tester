@@ -5,6 +5,8 @@ import EndpointDialog from './EndpointDialog';
 interface IProps {
     path: any,
     endpoint: string,
+    baseURL: string,
+    schemes: [string],
 }
 
 interface IOperationHash {
@@ -23,6 +25,7 @@ export const operationHash: IOperationHash = {
 
 export default function EndpointCard(props: IProps) {
     let [isOpen, setOpen] = useState(false);
+    let baseURL = `${props.schemes[0]}://${props.baseURL}`;
 
     return (
         <div>
@@ -40,7 +43,12 @@ export default function EndpointCard(props: IProps) {
                 ))}
 
             </Card>
-            <EndpointDialog useOpen={[isOpen, setOpen]} path={props.path} endpoint={props.endpoint}/>
+            <EndpointDialog 
+                useOpen={[isOpen, setOpen]} 
+                path={props.path} 
+                endpoint={props.endpoint}
+                baseURL={baseURL}
+            />
 
         </div>
 

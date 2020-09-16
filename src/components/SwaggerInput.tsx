@@ -73,7 +73,12 @@ export default function SwaggerInput() {
                 </H3>
                     {Object.values(schema.paths).map((path: any, index: number) => (
                         <div key={index}>
-                            <EndpointCard path={path} endpoint={Object.keys(schema.paths)[index]}/>
+                            <EndpointCard 
+                                schemes={schema.schemes||[(new URL(schemaURL)).protocol]}
+                                baseURL={schema.host||(new URL(schemaURL)).hostname} 
+                                path={path} 
+                                endpoint={Object.keys(schema.paths)[index]}
+                            />
                             <br/>
                         </div>
                     ))}

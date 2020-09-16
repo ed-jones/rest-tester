@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Container, Row, Col } from 'react-grid-system';
+import { Container } from 'react-grid-system';
 import SwaggerInput from './components/SwaggerInput';
-import { Alignment, Classes, Colors, Switch, Icon } from "@blueprintjs/core";
+import { Classes, Colors, Button, Icon } from "@blueprintjs/core";
+import Settings from "./components/Settings";
 
 const App = () => {
   let rehydratedDarkTheme = sessionStorage.getItem("darkTheme")==='true' || false;
   let [darkTheme, setDarkTheme] = useState(rehydratedDarkTheme);
+  let [settingsOpen, setSettingsOpen] = useState(false);
 
   function toggleDarkTheme() {
     sessionStorage.setItem('darkTheme', String(!darkTheme));
@@ -21,18 +23,24 @@ const App = () => {
             <h1>
                 <Icon iconSize={32} icon="lab-test"/> REST Tester
             </h1>
-            <Switch 
-              onClick={toggleDarkTheme}
-              innerLabel="Light"
-              innerLabelChecked="Dark"
-              defaultChecked={darkTheme}
+            <Button 
+              minimal 
               style={{margin:"0 0 0 auto"}} 
-              label="Theme"
-              alignIndicator={Alignment.RIGHT}
-            />
+              onClick={() => setSettingsOpen(true)}
+              icon={
+                <Icon 
+                  iconSize={24} 
+                  icon="cog" 
+                />
+            }/>
+            
           </div>
         <SwaggerInput/>
       </Container>
+      <Settings 
+        useOpen={[settingsOpen, setSettingsOpen]} 
+        useTheme={[darkTheme, toggleDarkTheme]}
+      />
     </div>
   )
 }

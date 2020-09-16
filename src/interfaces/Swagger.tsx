@@ -57,7 +57,7 @@ export interface path_item {
     parameters?: [parameter|reference],
 }
 
-interface operation {
+export interface operation {
     tags?: [string],
     summary?: string,
     description?: string,
@@ -77,14 +77,14 @@ interface external_docs {
     url?: string,
 }
 
-interface parameter {
+export interface parameter {
     name: string,
     in: string,
     description?: string,
     required?: boolean
 }
 
-interface reference {
+export interface reference {
     $ref: string,
 }
 

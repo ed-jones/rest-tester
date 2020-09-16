@@ -8,6 +8,7 @@ interface IProps {
     useOpen: [boolean, React.Dispatch<React.SetStateAction<boolean>>]
     path: path_item,
     endpoint: string,
+    baseURL: string,
 }
 
 enum Panels {
@@ -18,6 +19,8 @@ enum Panels {
 export default function EndpointDialog(props: IProps) {
     let [isOpen, setOpen] = props.useOpen;
     let [visiblePanel, setVisiblePanel] = useState(Panels.EndpointDetails)
+    let [operation, setOperation] = useState(Object.keys(props.path)[0]);
+    let [operationObj, setOperationObj] = useState(Object.values(props.path)[0])
     let rehydratedDarkTheme = sessionStorage.getItem("darkTheme")==='true' || false;
 
     function handleRunTests() {
@@ -35,11 +38,20 @@ export default function EndpointDialog(props: IProps) {
             isOpen={isOpen}
             onClose={() => setOpen(false)}
             className={rehydratedDarkTheme?Classes.DARK:undefined}
+            style={{width:"600px"}}
         >
             {visiblePanel===Panels.EndpointDetails?(
-                <EndpointDetails {...props} handleRunTests={handleRunTests} />
+                <EndpointDetails {...props} 
+                    handleRunTests={handleRunTests} 
+                    operation={[operation, setOperation]}
+                    operationObj={[operationObj, setOperationObj]}
+                />
             ):visiblePanel===Panels.EndpointTests?(
-                <EndpointTests handleCancelTests={handleCancelTests}/>
+                <EndpointTests {...props} 
+                    handleCancelTests={handleCancelTests}
+                    operation={[operation, setOperation]}
+                    operationObj={[operationObj, setOperationObj]}
+                />
             ):null}
         </Dialog>
     )
