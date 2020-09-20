@@ -33,7 +33,7 @@ export default function EndpointCard(props: IProps) {
                 <H5>
                     {props.endpoint}
                 </H5>
-                {Object.keys(props.path).map((operation: any, key: number) => (
+                {Object.keys(props.path).map((operation: string, key: number) => (
                     operationHash[operation]?(<span key={key}>
                         <Tag 
                             intent={operationHash[operation]}
