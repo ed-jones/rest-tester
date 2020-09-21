@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MultiSelect, IItemRendererProps } from '@blueprintjs/select';
+import { MultiSelect, IItemRendererProps, ItemPredicate } from '@blueprintjs/select';
 import responses from '../objects/responses';
 import { Intent, MenuItem } from '@blueprintjs/core';
 
@@ -102,6 +102,17 @@ export default function OperationSelect(props: IProps) {
         deselectItem(index);
     }
 
+    function areItemsEqual(itemA: tag, itemB: tag) {
+        return itemA.value === itemB.value;
+    }
+
+    function filterItem(query: string, item: tag): boolean {
+        const normalizedDescription = item.description.toLowerCase();
+        const normalizedQuery = query.toLowerCase();
+    
+        return `${item.value}: ${normalizedDescription}`.indexOf(normalizedQuery) >= 0;
+    }
+
     return (
         <MultiSelect
             fill
@@ -123,6 +134,8 @@ export default function OperationSelect(props: IProps) {
                 onRemove: handleTagRemove,
             }}
             noResults={<MenuItem disabled={true} text="No results." />}
+            itemsEqual={areItemsEqual}
+            itemPredicate={filterItem}
         />
     )
 }
