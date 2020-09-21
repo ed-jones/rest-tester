@@ -17,11 +17,13 @@ export default function EndpointDetails(props: EndpointDetailsProps) {
             <Tabs animate defaultSelectedTabId={0}>
                 {Object.keys(props.path).map((operationName: string, key: number) => (
                     <Tab id={key} key={key} title={operationName.toUpperCase()} panelClassName={Classes.FILL} panel={
+                        <Card>
                         <EndpointDetail 
                             operation={[operationName, Object.values(props.path)[key]]}
                             completeURL={completeURL}
                             handleRunTests={props.handleRunTests}
                         />
+                        </Card>
                     }/>
                 ))}
             </Tabs>
@@ -37,6 +39,18 @@ interface EndpointDetailProps {
 
 export function EndpointDetail(props: EndpointDetailProps) {
     let [operationName, operationObj] = props.operation;
+    let paramHash: {[param: string]: string} = {
+        "query": "Query",
+        "header": "Header",
+        "path": "Path",
+        "formData": "Form Data",
+        "body": "Body",
+    };
+ 
+    Array.from(document.getElementsByClassName(Classes.TAB_PANEL)).map((panel: any) => (
+        panel.setAttribute("style", "width:100%")
+    ));
+
     return (
         <div>
             <h3>
@@ -66,9 +80,9 @@ export function EndpointDetail(props: EndpointDetailProps) {
                         let params = Object.values(operationObj.parameters as [parameter])
                                         .filter((param: parameter) => param.in === paramType);
                         return params.length === 0?null:(
-                        <Tab id={index} key={index} title={paramType} panel={
+                        <Tab id={index} key={index} title={paramHash[paramType]} panel={
                             <Callout>
-                                <HTMLTable className={Classes.FILL}>
+                                <HTMLTable style={{width:"100%"}}>
                                     <thead>
                                         <tr>
                                             <th>Name</th>

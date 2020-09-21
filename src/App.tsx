@@ -3,11 +3,14 @@ import { Container } from 'react-grid-system';
 import SwaggerInput from './components/SwaggerInput';
 import { Classes, Colors, Button, Icon } from "@blueprintjs/core";
 import Settings from "./components/Settings";
+import { FocusStyleManager } from "@blueprintjs/core";
+
 
 const App = () => {
   let rehydratedDarkTheme = sessionStorage.getItem("darkTheme")==='true' || false;
   let [darkTheme, setDarkTheme] = useState(rehydratedDarkTheme);
   let [settingsOpen, setSettingsOpen] = useState(false);
+  FocusStyleManager.onlyShowFocusOnTabs();
 
   function toggleDarkTheme() {
     sessionStorage.setItem('darkTheme', String(!darkTheme));
