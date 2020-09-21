@@ -1,24 +1,27 @@
 import React from 'react'
-import { ControlGroup, InputGroup, Classes, Callout, HTMLTable, Switch, Button, Tabs, Tab, TagInput, Tag, Intent } from "@blueprintjs/core";
-import { path_item, operation, parameter } from '../interfaces/Swagger';
+import { ControlGroup, InputGroup, Classes, Callout, HTMLTable, Switch, Button, Tabs, Tab, TagInput, Tag, Intent, Card } from "@blueprintjs/core";
+import { path_item, operation, parameter, paths } from '../interfaces/Swagger';
 import { operationHash } from './EndpointCard';
 
-interface IProps {
+interface EndpointDetailsProps {
     path: path_item,
     endpoint: string,
     handleRunTests: any,
     baseURL: string,
-    operation: [string, any],
-    operationObj: [operation, any],
 }
 
-export default function EndpointDetails(props: IProps) {
+export default function EndpointDetails(props: EndpointDetailsProps) {
+    let completeURL = `${props.baseURL}${props.endpoint}`;
     return (
         <div className={Classes.DIALOG_BODY}>
             <Tabs animate defaultSelectedTabId={0}>
-                {Object.keys(props.path).map((operation: any, key: number) => (
-                    <Tab id={key} key={key} title={operation.toUpperCase()} panelClassName={Classes.FILL} panel={
-                        <EndpointDetail {...props} selectedOperation={operation}/>
+                {Object.keys(props.path).map((operationName: string, key: number) => (
+                    <Tab id={key} key={key} title={operationName.toUpperCase()} panelClassName={Classes.FILL} panel={
+                        <EndpointDetail 
+                            operation={[operationName, Object.values(props.path)[key]]}
+                            completeURL={completeURL}
+                            handleRunTests={props.handleRunTests}
+                        />
                     }/>
                 ))}
             </Tabs>
@@ -26,53 +29,55 @@ export default function EndpointDetails(props: IProps) {
     )
 }
 
-interface newIProps extends IProps {
-    selectedOperation: string,
+interface EndpointDetailProps {
+    operation: [string, any],
+    completeURL: string,
+    handleRunTests: any
 }
 
-export function EndpointDetail(props: newIProps) {
-    let selectedOperation = props.selectedOperation;
-    let [operationObj, setOperationObj] = props.operationObj;
-    let completeURL = `${props.baseURL}${props.endpoint}`;
-
+export function EndpointDetail(props: EndpointDetailProps) {
+    let [operationName, operationObj] = props.operation;
     return (
         <div>
+            <h3>
+                {operationObj.summary?operationObj.summary:"Endpoint"}
+            </h3>
             <ControlGroup>
-                <Button intent={operationHash[selectedOperation]}>
-                    {props.selectedOperation.toUpperCase()}
+                <Button intent={operationHash[operationName]}>
+                    {operationName.toUpperCase()}
                 </Button>
-                <InputGroup fill type="text" value={completeURL}/>
+                <InputGroup fill type="text" value={props.completeURL}/>
                 <Button 
                     intent="primary" 
                     icon="play" 
-                    onClick={() => props.handleRunTests(selectedOperation)}
+                    onClick={() => props.handleRunTests(props.operation)}
                 >
                     Run Tests
                 </Button>
             </ControlGroup>
             <div>
                 <h3>Description</h3>
-                <br/>
                 <Callout>{operationObj.description?operationObj.description:"No description"}</Callout>
-                <br/>
+                {operationObj.parameters?(
+                <>
                 <h3>Parameters</h3>
                 <Tabs vertical>
-                    {["query", "header", "path", "formData", "body"].map((paramType: string, index: number) => (
+                    {["query", "header", "path", "formData", "body"].map((paramType: string, index: number) => {
+                        let params = Object.values(operationObj.parameters as [parameter])
+                                        .filter((param: parameter) => param.in === paramType);
+                        return params.length === 0?null:(
                         <Tab id={index} key={index} title={paramType} panel={
-                        <Callout>
-                            <HTMLTable className={Classes.FILL}>
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <td>Value</td>
-                                        <td>Random</td>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                            {
-                                operationObj.parameters as [parameter]?(
-                                Object.values((operationObj.parameters as [parameter]).map((param: parameter, index: number) => (
-                                    param.in as string === paramType?(
+                            <Callout>
+                                <HTMLTable className={Classes.FILL}>
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <td>Value</td>
+                                            <td>Random</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {Object.values(params).map((param: parameter, index: number) => (
                                             <tr key={index}>
                                                 <td>{param.name}</td>
                                                 <td>
@@ -82,16 +87,15 @@ export function EndpointDetail(props: newIProps) {
                                                     <Switch defaultChecked/>
                                                 </td>
                                             </tr>
-
-                                    ):null
-                                )))
-                            ):null}
-                                </tbody>
-                            </HTMLTable>
-                        </Callout>
-                        }/>
-                    ))}
+                                        ))}
+                                    </tbody>
+                                </HTMLTable>
+                            </Callout>
+                        }/>)
+                    })}
                 </Tabs>
+                </>
+                ):null}
                 <h3>Responses</h3>
                 <TagInput values={
                     Object.values(operationObj.responses).map((response: any, index: number) => {

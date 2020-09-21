@@ -41,7 +41,7 @@ interface license {
     url?: string,
 }
 
-interface paths {
+export interface paths {
     [path: string]: path_item,
 }
 

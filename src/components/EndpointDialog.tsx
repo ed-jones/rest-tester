@@ -11,24 +11,31 @@ interface IProps {
     baseURL: string,
 }
 
-enum Panels {
-    EndpointDetails,
-    EndpointTests,
-}
-
 export default function EndpointDialog(props: IProps) {
     let [isOpen, setOpen] = props.useOpen;
-    let [visiblePanel, setVisiblePanel] = useState(Panels.EndpointDetails)
-    let [operation, setOperation] = useState(Object.keys(props.path)[0]);
-    let [operationObj, setOperationObj] = useState(Object.values(props.path)[0])
+    let [state, setState] = useState({
+        panel: <EndpointDetails {...props} 
+                    handleRunTests={handleRunTests} 
+                />,
+    });
+
     let rehydratedDarkTheme = sessionStorage.getItem("darkTheme")==='true' || false;
 
-    function handleRunTests() {
-        setVisiblePanel(Panels.EndpointTests);
+    function handleRunTests(operation: [string, any]) {
+        setState({...state, 
+            panel: <EndpointTests {...props} 
+                        handleCancelTests={handleCancelTests} 
+                        operation={operation}
+                    />
+        });
     }
 
     function handleCancelTests() {
-        setVisiblePanel(Panels.EndpointDetails);
+        setState({...state, 
+            panel: <EndpointDetails {...props} 
+                        handleRunTests={handleRunTests} 
+                    />
+        });
     }
 
     return (
@@ -40,19 +47,7 @@ export default function EndpointDialog(props: IProps) {
             className={rehydratedDarkTheme?Classes.DARK:undefined}
             style={{width:"600px"}}
         >
-            {visiblePanel===Panels.EndpointDetails?(
-                <EndpointDetails {...props} 
-                    handleRunTests={handleRunTests} 
-                    operation={[operation, setOperation]}
-                    operationObj={[operationObj, setOperationObj]}
-                />
-            ):visiblePanel===Panels.EndpointTests?(
-                <EndpointTests {...props} 
-                    handleCancelTests={handleCancelTests}
-                    operation={[operation, setOperation]}
-                    operationObj={[operationObj, setOperationObj]}
-                />
-            ):null}
+            {state.panel}
         </Dialog>
     )
 }

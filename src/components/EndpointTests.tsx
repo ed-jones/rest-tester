@@ -1,22 +1,20 @@
 import React from 'react';
 import { Classes, ProgressBar, Button, Callout } from "@blueprintjs/core";
-import { path_item, operation, parameter, reference } from '../interfaces/Swagger';
+import { path_item, parameter, reference } from '../interfaces/Swagger';
 
 interface IProps {
     handleCancelTests: any,
     path: path_item,
     endpoint: string,
     baseURL: string,
-    operation: [string, any],
-    operationObj: [operation, any],
+    operation: [string, any]
 }
 
 export default function EndpointTests(props: IProps) {
     let completeURL = `${props.baseURL}${props.endpoint}`;
-    let [operation] = props.operation;
-    let [operationObj] = props.operationObj;
     let testParameters = JSON.parse(sessionStorage.getItem('settings') as string);
-    operation = operation.toUpperCase();
+    let [operationName, operationObj] = props.operation;
+    operationName = operationName.toUpperCase();
 
     function generateParam(param: parameter) {
         if (!param.required && generateRandomBoolean()) {
@@ -86,7 +84,7 @@ export default function EndpointTests(props: IProps) {
                 <ul style={{listStyle:"none", padding:0, margin:0}}>
                     {[...Array(10)].map(() => (
                         <li>
-                        {operation} {completeURL}
+                        {operationName} {completeURL}
                         {operationObj.parameters?.map((param: parameter|reference) => (
                             (param as parameter).in==="query"?(
                                 `?${(param as parameter).name}=${generateParam(param as parameter)}`
