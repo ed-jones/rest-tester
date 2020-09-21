@@ -13,14 +13,16 @@ import {
         Tag, 
         Intent, 
         Card, 
-        H4, 
         Alignment,
         Label,
         NumericInput,
+        MenuItem,
+        ITagProps,
     } from "@blueprintjs/core";
-import { path_item, operation, parameter, paths } from '../interfaces/Swagger';
+import { path_item, parameter } from '../interfaces/Swagger';
 import { operationHash } from './EndpointCard';
 import { Item, ItemRight } from './Settings';
+import OperationSelect from './OperationSelect';
 
 interface EndpointDetailsProps {
     path: path_item,
@@ -65,10 +67,6 @@ export function EndpointDetail(props: EndpointDetailProps) {
         "formData": "Form Data",
         "body": "Body",
     };
- 
-    Array.from(document.getElementsByClassName(Classes.TAB_PANEL)).map((panel: any) => (
-        panel.setAttribute("style", "width:100%")
-    ));
 
     return (
         <div>
@@ -152,30 +150,7 @@ export function EndpointDetail(props: EndpointDetailProps) {
                 </>
                 ):null}
                 <h3>Valid Responses</h3>
-                <TagInput values={
-                    Object.values(operationObj.responses).map((_response: any, index: number) => {
-                        let tagName = Number(Object.keys(operationObj.responses)[index]);
-                        let intent: Intent = "none";
-
-                        if (tagName < 200){
-                            intent="primary";
-                        } else if (tagName < 300) {
-                            intent="success";
-                        } else if (tagName < 400) {
-                            intent="warning";
-                        } else if (isNaN(tagName)) {
-                            return null;
-                        } else {
-                            intent="danger";
-                        }
-  
-                        return (
-                            <Tag intent={intent}>
-                                {tagName}
-                            </Tag>
-                        )
-                    })
-                }/>
+                <OperationSelect responses={operationObj.responses}/>
             </div>
         </div>
     )
