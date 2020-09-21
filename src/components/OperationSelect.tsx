@@ -117,6 +117,7 @@ export default function OperationSelect(props: IProps) {
         <MultiSelect
             fill
             scrollToActiveItem
+            resetOnSelect
             items={state.items}
             selectedItems={state.tags}
             onItemSelect={handleItemSelect}
