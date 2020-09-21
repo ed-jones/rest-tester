@@ -1,7 +1,26 @@
 import React from 'react'
-import { ControlGroup, InputGroup, Classes, Callout, HTMLTable, Switch, Button, Tabs, Tab, TagInput, Tag, Intent, Card } from "@blueprintjs/core";
+import { 
+        ControlGroup, 
+        InputGroup, 
+        Classes, 
+        Callout, 
+        HTMLTable, 
+        Switch, 
+        Button, 
+        Tabs, 
+        Tab, 
+        TagInput, 
+        Tag, 
+        Intent, 
+        Card, 
+        H4, 
+        Alignment,
+        Label,
+        NumericInput,
+    } from "@blueprintjs/core";
 import { path_item, operation, parameter, paths } from '../interfaces/Swagger';
 import { operationHash } from './EndpointCard';
+import { Item, ItemRight } from './Settings';
 
 interface EndpointDetailsProps {
     path: path_item,
@@ -53,9 +72,6 @@ export function EndpointDetail(props: EndpointDetailProps) {
 
     return (
         <div>
-            <h3>
-                {operationObj.summary?operationObj.summary:"Endpoint"}
-            </h3>
             <ControlGroup>
                 <Button intent={operationHash[operationName]}>
                     {operationName.toUpperCase()}
@@ -70,11 +86,34 @@ export function EndpointDetail(props: EndpointDetailProps) {
                 </Button>
             </ControlGroup>
             <div>
-                <h3>Description</h3>
-                <Callout>{operationObj.description?operationObj.description:"No description"}</Callout>
+                <h3>Testing Rules</h3>
+                <Switch
+                    label="Methodology"
+                    innerLabel="RT"
+                    innerLabelChecked="ART"
+                    alignIndicator={Alignment.RIGHT}
+                />
+                <Switch
+                    label="Abort on Failure"
+                    innerLabel="No"
+                    innerLabelChecked="Yes"
+                    alignIndicator={Alignment.RIGHT}
+                />
+                <Item>
+                    <Label>
+                        Maximum Tests
+                    </Label>
+                    <ItemRight>
+                        <NumericInput 
+                            placeholder="Unlimited" 
+                            name="maxNum"
+                            value={0}
+                        />
+                    </ItemRight>
+                </Item>
                 {operationObj.parameters?(
                 <>
-                <h3>Parameters</h3>
+                <h3>Test Parameters</h3>
                 <Tabs vertical>
                     {["query", "header", "path", "formData", "body"].map((paramType: string, index: number) => {
                         let params = Object.values(operationObj.parameters as [parameter])
@@ -95,10 +134,12 @@ export function EndpointDetail(props: EndpointDetailProps) {
                                             <tr key={index}>
                                                 <td>{param.name}</td>
                                                 <td>
-                                                    <InputGroup type="text" placeholder="Value" disabled/>
+                                                    <InputGroup type="text" placeholder={param.type||"unknown"} disabled/>
                                                 </td>
                                                 <td style={{textAlign:'center'}}>
-                                                    <Switch defaultChecked/>
+                                                    <Switch 
+                                                        defaultChecked
+                                                    />
                                                 </td>
                                             </tr>
                                         ))}
@@ -110,20 +151,24 @@ export function EndpointDetail(props: EndpointDetailProps) {
                 </Tabs>
                 </>
                 ):null}
-                <h3>Responses</h3>
+                <h3>Valid Responses</h3>
                 <TagInput values={
-                    Object.values(operationObj.responses).map((response: any, index: number) => {
+                    Object.values(operationObj.responses).map((_response: any, index: number) => {
                         let tagName = Number(Object.keys(operationObj.responses)[index]);
                         let intent: Intent = "none";
-                        switch(true) {
-                            case (tagName < 200): intent="primary";
-                            break;
-                            case (tagName < 300): intent="success";
-                            break;
-                            case (tagName < 400): intent="warning";
-                            break;
-                            default: intent="danger";
+
+                        if (tagName < 200){
+                            intent="primary";
+                        } else if (tagName < 300) {
+                            intent="success";
+                        } else if (tagName < 400) {
+                            intent="warning";
+                        } else if (isNaN(tagName)) {
+                            return null;
+                        } else {
+                            intent="danger";
                         }
+  
                         return (
                             <Tag intent={intent}>
                                 {tagName}

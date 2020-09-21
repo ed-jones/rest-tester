@@ -8,13 +8,13 @@ interface IProps {
     useTheme: [boolean, any],
 }
 
-const Item = styled.span({
+export const Item = styled.span({
     display:"flex", 
-    lineHeight:"30px", 
+    lineHeight:"18px", 
     alignItems:"center",
 });
 
-const ItemRight = styled.span({
+export const ItemRight = styled.span({
     marginLeft:"auto",
 });
 
