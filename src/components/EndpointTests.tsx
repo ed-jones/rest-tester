@@ -1,28 +1,30 @@
 import React from 'react';
 import { Classes, ProgressBar, Button, Callout } from "@blueprintjs/core";
-import { path_item, parameter, reference } from '../interfaces/Swagger';
+import { path_item } from '../interfaces/Swagger';
+import { ITests } from './EndpointDialog';
 
 interface IProps {
     handleCancelTests: any,
     path: path_item,
     endpoint: string,
     baseURL: string,
-    operation: [string, any]
+    testConfig: ITests,
 }
 
 export default function EndpointTests(props: IProps) {
     let completeURL = `${props.baseURL}${props.endpoint}`;
-    let testParameters = JSON.parse(sessionStorage.getItem('settings') as string);
-    let [operationName, operationObj] = props.operation;
+    let globalTestConfig = JSON.parse(sessionStorage.getItem('settings') as string);
+    let operationName = props.testConfig.operation;
+    let parameters = props.testConfig.params;
     operationName = operationName.toUpperCase();
 
-    function generateParam(param: parameter) {
+    function generateParam(param: any) {
         if (!param.required && generateRandomBoolean()) {
             return "";
         }
 
-        let max = param.max||testParameters?.maxNum||1000000;
-        let min = param.min||testParameters?.minNum||-1000000;
+        let max = param.max||globalTestConfig?.maxNum||1000000;
+        let min = param.min||globalTestConfig?.minNum||-1000000;
 
         switch(param.type) {
             case "number":
@@ -36,8 +38,8 @@ export default function EndpointTests(props: IProps) {
             case "object":
                 return; // !TODO
             default:
-                max = param.max||testParameters?.maxStr||32;
-                min = param.min||testParameters?.minStr||0;
+                max = param.max||globalTestConfig?.maxStr||32;
+                min = param.min||globalTestConfig?.minStr||0;
                 return generateRandomString(max, min);
         }
     }
@@ -85,9 +87,9 @@ export default function EndpointTests(props: IProps) {
                     {[...Array(10)].map(() => (
                         <li>
                         {operationName} {completeURL}
-                        {operationObj.parameters?.map((param: parameter|reference) => (
-                            (param as parameter).in==="query"?(
-                                `?${(param as parameter).name}=${generateParam(param as parameter)}`
+                        {parameters?.map((param) => (
+                            param.in==="query"?(
+                                `?${param.name}=${generateParam(param)}`
                             ):undefined
                         ))}
                         </li>

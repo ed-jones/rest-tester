@@ -11,6 +11,24 @@ interface IProps {
     baseURL: string,
 }
 
+export interface ITests {
+    operation: string,
+    art: boolean,
+    abortOnFail: boolean,
+    maxTests: number|undefined,
+    params?: Array<{
+        name: string,
+        value: string,
+        random: boolean,
+        in: string,
+        max?: number,
+        min?: number,
+        type?: string,
+        required?: boolean,
+    }>,
+    responses: number[],
+}
+
 export default function EndpointDialog(props: IProps) {
     let [isOpen, setOpen] = props.useOpen;
     let [state, setState] = useState({
@@ -21,11 +39,11 @@ export default function EndpointDialog(props: IProps) {
 
     let rehydratedDarkTheme = sessionStorage.getItem("darkTheme")==='true' || false;
 
-    function handleRunTests(operation: [string, any]) {
+    function handleRunTests(testConfig: ITests) {
         setState({...state, 
             panel: <EndpointTests {...props} 
                         handleCancelTests={handleCancelTests} 
-                        operation={operation}
+                        testConfig={testConfig}
                     />
         });
     }

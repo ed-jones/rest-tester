@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { 
         ControlGroup, 
         InputGroup, 
@@ -9,20 +9,16 @@ import {
         Button, 
         Tabs, 
         Tab, 
-        TagInput, 
-        Tag, 
-        Intent, 
         Card, 
         Alignment,
         Label,
         NumericInput,
-        MenuItem,
-        ITagProps,
     } from "@blueprintjs/core";
-import { path_item, parameter } from '../interfaces/Swagger';
+import { path_item, parameter, operation } from '../interfaces/Swagger';
 import { operationHash } from './EndpointCard';
 import { Item, ItemRight } from './Settings';
 import OperationSelect from './OperationSelect';
+import { ITests } from './EndpointDialog';
 
 interface EndpointDetailsProps {
     path: path_item,
@@ -53,23 +49,43 @@ export default function EndpointDetails(props: EndpointDetailsProps) {
 }
 
 interface EndpointDetailProps {
-    operation: [string, any],
+    operation: [string, operation],
     completeURL: string,
     handleRunTests: any
 }
 
+const paramHash: {[param: string]: string} = {
+    "query": "Query",
+    "header": "Header",
+    "path": "Path",
+    "formData": "Form Data",
+    "body": "Body",
+};
+
 export function EndpointDetail(props: EndpointDetailProps) {
     let [operationName, operationObj] = props.operation;
-    let paramHash: {[param: string]: string} = {
-        "query": "Query",
-        "header": "Header",
-        "path": "Path",
-        "formData": "Form Data",
-        "body": "Body",
-    };
+
+    let defaultState: ITests = {
+        operation: "",
+        art: false,
+        abortOnFail: false,
+        maxTests: undefined,
+        params: (operationObj.parameters as [parameter]).map((value: parameter) => ({
+            name: value.name,
+            value: "",
+            random: false,
+            in: value.in,
+            max: value?.max,
+            min: value?.min,
+            type: value?.type,
+            required: value?.required,
+        })),
+        responses: [],
+    }
+    let [state, setState] = useState(defaultState);
 
     return (
-        <div>
+        <form onSubmit={() => props.handleRunTests(state)}>
             <ControlGroup>
                 <Button intent={operationHash[operationName]}>
                     {operationName.toUpperCase()}
@@ -78,7 +94,7 @@ export function EndpointDetail(props: EndpointDetailProps) {
                 <Button 
                     intent="primary" 
                     icon="play" 
-                    onClick={() => props.handleRunTests(props.operation)}
+                    type="submit"
                 >
                     Run Tests
                 </Button>
@@ -152,6 +168,6 @@ export function EndpointDetail(props: EndpointDetailProps) {
                 <h3>Valid Responses</h3>
                 <OperationSelect responses={operationObj.responses}/>
             </div>
-        </div>
+        </form>
     )
 }
