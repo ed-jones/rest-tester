@@ -136,16 +136,18 @@ function runART(_testConfig: ITests, _url: string): Promise<boolean> {  // art f
   return new Promise(() => false);
 }
 
+<<<<<<< Updated upstream
+=======
 function calcHashVals(value: string) {
     let hashVal = 0;
     if (value.length == 0) {
       return hashVal;
     }
     // compare parameter value to array values
-    artArray.forEach((value) => {
+    artArray.forEach((arrVal) => {
         let char;
-        for(let i=0; i<value.length; i++) {
-            char = value.charCodeAt(i);
+        for(let i=0; i<arrVal.length; i++) {
+            char = arrVal.charCodeAt(i);
             hashVal = ((hashVal << 5) - hashVal) + char;
             hashVal = hashVal & hashVal;
         }
@@ -153,6 +155,7 @@ function calcHashVals(value: string) {
     })
 }
 
+>>>>>>> Stashed changes
 function testEndpoint(
   url: string,
   responses: (number | "default")[],
