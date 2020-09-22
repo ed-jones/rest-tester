@@ -132,7 +132,6 @@ export default function Settings(props: IProps) {
                             />
                         </ItemRight>
                     </Item>
-                    <br />
                     <Item>
                         <Label>Array Min Length</Label>
                         <ItemRight>
