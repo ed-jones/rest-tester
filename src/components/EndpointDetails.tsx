@@ -82,10 +82,10 @@ export function EndpointDetail(props: EndpointDetailProps) {
         })),
         responses: [],
     }
-    let [state, setState] = useState(defaultState);
+    let [state] = useState(defaultState);
 
     return (
-        <form onSubmit={() => props.handleRunTests(state)}>
+        <div>
             <ControlGroup>
                 <Button intent={operationHash[operationName]}>
                     {operationName.toUpperCase()}
@@ -94,7 +94,7 @@ export function EndpointDetail(props: EndpointDetailProps) {
                 <Button 
                     intent="primary" 
                     icon="play" 
-                    type="submit"
+                    onClick={() => props.handleRunTests(state)}
                 >
                     Run Tests
                 </Button>
@@ -168,6 +168,6 @@ export function EndpointDetail(props: EndpointDetailProps) {
                 <h3>Valid Responses</h3>
                 <OperationSelect responses={operationObj.responses}/>
             </div>
-        </form>
+        </div>
     )
 }

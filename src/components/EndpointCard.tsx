@@ -49,8 +49,6 @@ export default function EndpointCard(props: IProps) {
                 endpoint={props.endpoint}
                 baseURL={baseURL}
             />
-
         </div>
-
     )
 }
