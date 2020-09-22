@@ -105,7 +105,7 @@ function runART(_testConfig: ITests, _url: string): Promise<boolean> {  // art f
   const artTestParams = _testConfig.params; // stores the parameters from the user
   const artGlobalSettings = JSON.parse(sessionStorage.getItem("settings") as string);   // gets the settings from the links
 
-//   let artQueryParams = ""; // empty string
+  let artQueryParams = ""; // empty string
   artTestParams?.forEach((param: ITestParam) => {   // loop for each test param
     let genVal = generateValue(param, artGlobalSettings);   // generates a random value based off the global settings
     
@@ -114,26 +114,26 @@ function runART(_testConfig: ITests, _url: string): Promise<boolean> {  // art f
         {"key": genVal, "value": _hash}
     );  // push random val along with hash value to the array
     
-    let newVal = compareHash(_hash);
-    console.log(newVal);
-
     // compare the distance between non numeric vals
-    // switch (param.in) {
-    //   case "query":
-    //     if (newVal !== undefined) {
-    //       artQueryParams += `?${param.name}=${param.value || newVal}`;
-    //     }
-    //     break;
-    //   case "header":
-    //     break;
-    //   case "path":
-    //     _url = _url.replace(`{${param.name}}`, newVal);
-    //     break;
-    //   case "formData":
-    //     break;
-    //   case "body":
-    //     break;
-    // }
+    // generate new value based off array
+    let newVal = generateValue(compareHash(_hash), artGlobalSettings);
+
+    switch (param.in) {
+      case "query":
+        if (newVal !== undefined) {
+          artQueryParams += `?${param.name}=${param.value || newVal}`;
+        }
+        break;
+      case "header":
+        break;
+      case "path":
+        _url = _url.replace(`{${param.name}}`, newVal);
+        break;
+      case "formData":
+        break;
+      case "body":
+        break;
+    }
   });
 
   return new Promise(() => false);
@@ -155,9 +155,9 @@ function calcHash(value: any) {
     return hashVal;
 }
 
-function compareHash(compareVal: any) {
+function compareHash(compareVal: number) {
     let currentHash = compareVal;
-    let maxHash;
+    let maxHash = 0;
     let index = Object.keys(artArray)[1];   // hash
     artArray.forEach(val => {
         if(currentHash >= val[index]) {
