@@ -3,6 +3,7 @@ import { Dialog, Classes } from "@blueprintjs/core";
 import { IPathItem } from '@interfaces/Swagger';
 import EndpointDetails from './endpoint_details/EndpointDetails';
 import EndpointTests from './endpoint_tests/EndpointTests';
+import EndpointResults from './endpoint_tests/endpoint_results/EndpointResults';
 
 interface IProps {
     useOpen: [boolean, any]
@@ -44,6 +45,12 @@ const EndpointTestsPanel = (props: IProps, handleCancelTests: any, testConfig: I
     />
 );
 
+const EndpointResultsPanel = (props: IProps, handleResults: any,) => (
+    <EndpointResults {...props}
+         handleResults={handleResults}
+    />
+);
+
 export default function EndpointDialog(props: IProps) {
     let [isOpen, handleClose] = props.useOpen;
     let [state, setState] = useState({
@@ -64,6 +71,13 @@ export default function EndpointDialog(props: IProps) {
         setState({
             ...state,
             panel: EndpointDetailsPanel(props, handleRunTests),
+        });
+    }
+
+    function handleResults() {
+        setState({
+            ...state,
+            panel: EndpointResultsPanel(props, handleResults),
         });
     }
 
