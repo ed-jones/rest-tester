@@ -129,11 +129,10 @@ export function EndpointDetail(props: EndpointDetailProps) {
                     <>
                         <h3>Test Parameters</h3>
                         <Tabs vertical defaultSelectedTabId={0}>
-                            {["query", "header", "path", "formData", "body"].map((paramType: string, index: number) => {
-                                let params = Object.values(operationObj.parameters as [IParameter])
-                                    .filter((param: IParameter) => param.in === paramType);
-                                return params.length === 0 ? null : (
-                                    <Tab id={index} key={index} title={paramHash[paramType]} panel={
+                            {Array.from(new Set(Object.values(operationObj.parameters as [IParameter])
+                                .map((param: IParameter) => (param.in))))
+                                .map((paramIn: string, index: number) => (
+                                    <Tab id={index} key={paramIn} title={paramHash[paramIn as string]} panel={
                                         <Callout>
                                             <HTMLTable style={{ width: "100%" }}>
                                                 <thead>
@@ -144,7 +143,9 @@ export function EndpointDetail(props: EndpointDetailProps) {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {Object.values(params).map((param: IParameter, index: number) => (
+                                                    {Object.values(operationObj.parameters as [IParameter])
+                                                    .filter((param: IParameter) => (param.in===paramIn))
+                                                    .map((param: IParameter, index: number) => (
                                                         <tr key={index}>
                                                             <td>{param.name}</td>
                                                             <td>
@@ -160,8 +161,8 @@ export function EndpointDetail(props: EndpointDetailProps) {
                                                 </tbody>
                                             </HTMLTable>
                                         </Callout>
-                                    } />)
-                            })}
+                                    } />
+                                ))}
                         </Tabs>
                     </>
                 ) : null}
