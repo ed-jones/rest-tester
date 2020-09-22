@@ -84,8 +84,8 @@ export default function EndpointTests(props: IProps) {
             <br />
             <Callout style={{ height: "250px", overflowY: "scroll" }}>
                 <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                    {[...Array(10)].map(() => (
-                        <li>
+                    {[...Array(10)].map((value: number, key: number) => (
+                        <li key={key}>
                             {operationName} {completeURL}
                             {parameters?.map((param) => (
                                 param.in === "query" ? (

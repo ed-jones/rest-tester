@@ -129,6 +129,7 @@ export default function OperationSelect(props: IProps) {
                     active={itemProps.modifiers.active}
                     onClick={itemProps.handleClick}
                     icon={isItemSelected(item) ? "tick" : "blank"}
+                    key={item}
                 />}
             tagInputProps={{
                 tagProps: getTagProps,
