@@ -128,7 +128,7 @@ export function EndpointDetail(props: EndpointDetailProps) {
                 {operationObj.parameters ? (
                     <>
                         <h3>Test Parameters</h3>
-                        <Tabs vertical>
+                        <Tabs vertical defaultSelectedTabId={0}>
                             {["query", "header", "path", "formData", "body"].map((paramType: string, index: number) => {
                                 let params = Object.values(operationObj.parameters as [IParameter])
                                     .filter((param: IParameter) => param.in === paramType);
