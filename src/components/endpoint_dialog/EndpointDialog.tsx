@@ -15,14 +15,14 @@ export interface ITests {
     operation: string,
     art: boolean,
     abortOnFail: boolean,
-    maxTests: number | undefined,
+    maxTests?: number,
     params?: Array<ITestParam>,
     responses: (number|"default")[],
 }
 
 export interface ITestParam {
     name: string,
-    value: string,
+    value?: string,
     random: boolean,
     in: string,
     max?: number,
