@@ -138,8 +138,8 @@ export default function Settings(props: IProps) {
                             <NumericInput
                                 placeholder="10"
                                 onValueChange={handleChange}
-                                name="maxArr"
-                                value={state.maxArr}
+                                name="minArr"
+                                value={state.minArr}
                             />
                         </ItemRight>
                     </Item>
