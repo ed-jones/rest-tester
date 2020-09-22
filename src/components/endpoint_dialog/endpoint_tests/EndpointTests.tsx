@@ -2,6 +2,7 @@ import React from "react";
 import { Classes, ProgressBar, Button, Callout } from "@blueprintjs/core";
 import { IPathItem } from "@interfaces/Swagger";
 import { ITests, ITestParam } from "../EndpointDialog";
+import { keyframes } from "@emotion/core";
 
 interface IProps {
   handleCancelTests: any;
@@ -98,33 +99,35 @@ function runRT(testConfig: ITests, url: string): Promise<boolean> {
   return testEndpoint(`${url}${queryParams}`, testConfig.responses);
 }
 
-let artArray: string[] = []; // empty array to be populated
+let artArray: any[] = []; // empty array to be populated
 
 function runART(_testConfig: ITests, _url: string): Promise<boolean> {  // art func
   const artTestParams = _testConfig.params; // stores the parameters from the user
   const artGlobalSettings = JSON.parse(sessionStorage.getItem("settings") as string);   // gets the settings from the links
 
-  let artQueryParams = ""; // empty string
+//   let artQueryParams = ""; // empty string
   artTestParams?.forEach((param: ITestParam) => {   // loop for each test param
     let genVal = generateValue(param, artGlobalSettings);   // generates a random value based off the global settings
-    // console.log(genVal);
-    artArray.push(genVal);  // push random val to the array
-    console.log(genVal, " genVal pushed to array.");
-    calcHashVals(genVal);
+    
+    let _hash = calcHash(genVal);
+    artArray.push(
+        {"key": genVal, "value": _hash}
+    );  // push random val along with hash value to the array
+    
+    let newVal = compareHash(_hash);
+    console.log(newVal);
+
     // compare the distance between non numeric vals
     // switch (param.in) {
     //   case "query":
-    //     if (genVal !== undefined) {
-    //       artQueryParams += `?${param.name}=${param.value || genVal}`;
+    //     if (newVal !== undefined) {
+    //       artQueryParams += `?${param.name}=${param.value || newVal}`;
     //     }
     //     break;
     //   case "header":
-    //     // if (genVal !== undefined) {
-    //     //     artQueryParams += `?${param.name}=${param.value || genVal}`;
-    //     // }
     //     break;
     //   case "path":
-    //     _url = _url.replace(`{${param.name}}`, genVal);
+    //     _url = _url.replace(`{${param.name}}`, newVal);
     //     break;
     //   case "formData":
     //     break;
@@ -136,23 +139,36 @@ function runART(_testConfig: ITests, _url: string): Promise<boolean> {  // art f
   return new Promise(() => false);
 }
 
-function calcHashVals(value: string) {
+function calcHash(value: any) {
     let hashVal = 0;
-    if (value.length == 0) {
+    if (value.length === 0) {
       return hashVal;
     }
     // compare parameter value to array values
-    artArray.forEach((arrVal) => {
-        let char;
-        for(let i=0; i<arrVal.length; i++) {
-            char = arrVal.charCodeAt(i);
-            hashVal = ((hashVal << 5) - hashVal) + char;
-            hashVal = hashVal & hashVal;
-        }
-        console.log(hashVal);
-    })
+    let char;
+    for(let i=0; i<value.length; i++) {
+        char = value.charCodeAt(i);
+        hashVal = ((hashVal << 5) - hashVal) + char;
+        hashVal = hashVal & hashVal;
+    }
+
+    return hashVal;
 }
 
+function compareHash(compareVal: any) {
+    let currentHash = compareVal;
+    let maxHash;
+    let index = Object.keys(artArray)[1];   // hash
+    artArray.forEach(val => {
+        if(currentHash >= val[index]) {
+            maxHash = currentHash;
+        } else {
+            maxHash = val[index];
+        }
+    })
+    return maxHash; // furthest away
+}
+    
 function testEndpoint(
   url: string,
   responses: (number | "default")[],
