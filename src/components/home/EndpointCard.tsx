@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Card, Tag, H5, Intent } from "@blueprintjs/core";
-import EndpointDialog from './EndpointDialog';
-import { IOperationVerb } from '../interfaces/Swagger';
+import EndpointDialog from '../endpoint_dialog/EndpointDialog';
+import { IOperationVerb } from '@interfaces/Swagger';
 
 interface IProps {
     path: any,

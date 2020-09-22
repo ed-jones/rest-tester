@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Dialog, Classes, Switch, Alignment, NumericInput, H4, Label, Button } from '@blueprintjs/core';
 import styled from '@emotion/styled';
-import Toaster from './Toaster';
+import Toaster from '../global/Toaster';
 
 interface IProps {
     useOpen: [boolean, any],

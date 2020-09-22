@@ -14,11 +14,11 @@ import {
         Label,
         NumericInput,
     } from "@blueprintjs/core";
-import { IPathItem, IParameter, IOperation, IOperationVerb } from '../interfaces/Swagger';
-import { OperationIntentHashMap } from './EndpointCard';
-import { Item, ItemRight } from './Settings';
+import { IPathItem, IParameter, IOperation, IOperationVerb } from '@interfaces/Swagger';
+import { OperationIntentHashMap } from '@components/home/EndpointCard';
+import { Item, ItemRight } from '@components/settings/Settings';
 import OperationSelect from './OperationSelect';
-import { ITests } from './EndpointDialog';
+import { ITests } from '../EndpointDialog';
 
 interface EndpointDetailsProps {
     path: IPathItem,

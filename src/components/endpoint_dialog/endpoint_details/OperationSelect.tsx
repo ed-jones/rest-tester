@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { MultiSelect, IItemRendererProps } from '@blueprintjs/select';
-import responses from '../data/responses';
+import responses from '@data/responses';
 import { Intent, MenuItem } from '@blueprintjs/core';
 
 interface IProps {

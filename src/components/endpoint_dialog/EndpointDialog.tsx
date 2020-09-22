@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Dialog, Classes } from "@blueprintjs/core";
-import { IPathItem } from '../interfaces/Swagger';
-import EndpointDetails from './EndpointDetails';
-import EndpointTests from './EndpointTests';
+import { IPathItem } from '@interfaces/Swagger';
+import EndpointDetails from './endpoint_details/EndpointDetails';
+import EndpointTests from './endpoint_tests/EndpointTests';
 
 interface IProps {
     useOpen: [boolean, any]

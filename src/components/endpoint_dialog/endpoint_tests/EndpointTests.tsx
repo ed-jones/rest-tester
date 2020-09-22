@@ -1,7 +1,7 @@
 import React from 'react';
 import { Classes, ProgressBar, Button, Callout } from "@blueprintjs/core";
-import { IPathItem } from '../interfaces/Swagger';
-import { ITests } from './EndpointDialog';
+import { IPathItem } from '@interfaces/Swagger';
+import { ITests } from '../EndpointDialog';
 
 interface IProps {
     handleCancelTests: any,

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Container } from 'react-grid-system';
-import SwaggerInput from './components/SwaggerInput';
+import SwaggerInput from './components/home/SwaggerInput';
 import { Classes, Colors, Button, Icon } from "@blueprintjs/core";
-import Settings from "./components/Settings";
+import Settings from "./components/settings/Settings";
 import { FocusStyleManager } from "@blueprintjs/core";
 
 FocusStyleManager.onlyShowFocusOnTabs();

@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import SwaggerParser from "@apidevtools/swagger-parser";
 import { InputGroup, ControlGroup, FormGroup, Button, H3 } from "@blueprintjs/core";
-import Swagger from '../interfaces/Swagger';
-import Toaster from './Toaster';
+import Swagger from '@interfaces/Swagger';
+import Toaster from '../global/Toaster';
 import EndpointCard from './EndpointCard';
 
 const emptySwagger: Swagger = {
