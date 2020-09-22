@@ -23,29 +23,29 @@ export default function SwaggerInput() {
     });
     function handleSubmit(event: any) {
         event.preventDefault();
-        setState({...state, loading: true, schema: emptySwagger});
+        setState({ ...state, loading: true, schema: emptySwagger });
         SwaggerParser.validate(state.schemaURL)
-        .then(e => {
-            Toaster.show({
-                message: "Successfully Validated", 
-                intent: "success", 
-                icon: "tick-circle"
+            .then(e => {
+                Toaster.show({
+                    message: "Successfully Validated",
+                    intent: "success",
+                    icon: "tick-circle"
+                });
+                setState({ ...state, error: false, loading: false, schema: e });
+            })
+            .catch(e => {
+                Toaster.show({
+                    message: e.message,
+                    intent: "danger",
+                    icon: "error",
+                    onDismiss: () => setState({ ...state, error: false }),
+                });
+                setState({ ...state, error: true, loading: false });
             });
-            setState({...state, error: false, loading: false, schema: e});
-        })
-        .catch(e => {
-            Toaster.show({
-                message: e.message, 
-                intent: "danger", 
-                icon: "error", 
-                onDismiss: () => setState({...state, error: false}),
-            });
-            setState({...state, error: true, loading: false});
-        });
     }
 
     function handleChange(event: any) {
-        setState({...state, schema: event.target.value});
+        setState({ ...state, schema: event.target.value });
     }
 
     return (
@@ -53,15 +53,15 @@ export default function SwaggerInput() {
             <form onSubmit={handleSubmit}>
                 <FormGroup label="Input URL for Swagger 2.0 or OpenAPI 3.0 Schema">
                     <ControlGroup>
-                        <InputGroup 
+                        <InputGroup
                             type="text"
                             placeholder="http://example.com/swagger.yaml"
                             value={state.schemaURL}
                             onChange={handleChange}
                             fill
-                            intent={state.error?"danger":state.schema !== emptySwagger?"success":"none"}
+                            intent={state.error ? "danger" : state.schema !== emptySwagger ? "success" : "none"}
                         />
-                        <Button 
+                        <Button
                             intent="success"
                             loading={state.loading}
                             text="Validate"
@@ -71,23 +71,23 @@ export default function SwaggerInput() {
                     </ControlGroup>
                 </FormGroup>
             </form>
-            {state.schema !== emptySwagger ? 
-            <div>
-                <H3>
-                    {state.schema.info.title}
-                </H3>
+            {state.schema !== emptySwagger ?
+                <div>
+                    <H3>
+                        {state.schema.info.title}
+                    </H3>
                     {Object.values(state.schema.paths).map((path: any, index: number) => (
                         <div key={index}>
-                            <EndpointCard 
-                                schemes={state.schema.schemes||[(new URL(state.schemaURL)).protocol]}
-                                baseURL={state.schema.host||(new URL(state.schemaURL)).hostname} 
-                                path={path} 
+                            <EndpointCard
+                                schemes={state.schema.schemes || [(new URL(state.schemaURL)).protocol]}
+                                baseURL={state.schema.host || (new URL(state.schemaURL)).hostname}
+                                path={path}
                                 endpoint={Object.keys(state.schema.paths)[index]}
                             />
-                            <br/>
+                            <br />
                         </div>
                     ))}
-            </div> : null}
+                </div> : null}
         </div>
     )
 }

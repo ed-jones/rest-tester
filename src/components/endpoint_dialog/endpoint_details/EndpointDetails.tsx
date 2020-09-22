@@ -1,19 +1,19 @@
 import React, { useState } from 'react'
-import { 
-        ControlGroup, 
-        InputGroup, 
-        Classes, 
-        Callout, 
-        HTMLTable, 
-        Switch, 
-        Button, 
-        Tabs, 
-        Tab, 
-        Card, 
-        Alignment,
-        Label,
-        NumericInput,
-    } from "@blueprintjs/core";
+import {
+    ControlGroup,
+    InputGroup,
+    Classes,
+    Callout,
+    HTMLTable,
+    Switch,
+    Button,
+    Tabs,
+    Tab,
+    Card,
+    Alignment,
+    Label,
+    NumericInput,
+} from "@blueprintjs/core";
 import { IPathItem, IParameter, IOperation, IOperationVerb } from '@interfaces/Swagger';
 import { OperationIntentHashMap } from '@components/home/EndpointCard';
 import { Item, ItemRight } from '@components/settings/Settings';
@@ -35,13 +35,13 @@ export default function EndpointDetails(props: EndpointDetailsProps) {
                 {Object.keys(props.path).map((operationName: string, key: number) => (
                     <Tab id={key} key={key} title={operationName.toUpperCase()} panelClassName={Classes.FILL} panel={
                         <Card>
-                        <EndpointDetail 
-                            operation={[operationName as IOperationVerb, Object.values(props.path)[key]]}
-                            completeURL={completeURL}
-                            handleRunTests={props.handleRunTests}
-                        />
+                            <EndpointDetail
+                                operation={[operationName as IOperationVerb, Object.values(props.path)[key]]}
+                                completeURL={completeURL}
+                                handleRunTests={props.handleRunTests}
+                            />
                         </Card>
-                    }/>
+                    } />
                 ))}
             </Tabs>
         </div>
@@ -54,7 +54,7 @@ interface EndpointDetailProps {
     handleRunTests: any
 }
 
-const paramHash: {[param: string]: string} = {
+const paramHash: { [param: string]: string } = {
     "query": "Query",
     "header": "Header",
     "path": "Path",
@@ -90,10 +90,10 @@ export function EndpointDetail(props: EndpointDetailProps) {
                 <Button intent={OperationIntentHashMap[operationName]}>
                     {operationName.toUpperCase()}
                 </Button>
-                <InputGroup fill type="text" value={props.completeURL}/>
-                <Button 
-                    intent="primary" 
-                    icon="play" 
+                <InputGroup fill type="text" value={props.completeURL} />
+                <Button
+                    intent="primary"
+                    icon="play"
                     onClick={() => props.handleRunTests(state)}
                 >
                     Run Tests
@@ -118,55 +118,55 @@ export function EndpointDetail(props: EndpointDetailProps) {
                         Maximum Tests
                     </Label>
                     <ItemRight>
-                        <NumericInput 
-                            placeholder="Unlimited" 
+                        <NumericInput
+                            placeholder="Unlimited"
                             name="maxNum"
                             value={0}
                         />
                     </ItemRight>
                 </Item>
-                {operationObj.parameters?(
-                <>
-                <h3>Test Parameters</h3>
-                <Tabs vertical>
-                    {["query", "header", "path", "formData", "body"].map((paramType: string, index: number) => {
-                        let params = Object.values(operationObj.parameters as [IParameter])
-                                        .filter((param: IParameter) => param.in === paramType);
-                        return params.length === 0?null:(
-                        <Tab id={index} key={index} title={paramHash[paramType]} panel={
-                            <Callout>
-                                <HTMLTable style={{width:"100%"}}>
-                                    <thead>
-                                        <tr>
-                                            <th>Name</th>
-                                            <td>Value</td>
-                                            <td>Random</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {Object.values(params).map((param: IParameter, index: number) => (
-                                            <tr key={index}>
-                                                <td>{param.name}</td>
-                                                <td>
-                                                    <InputGroup type="text" placeholder={param.type||"unknown"} disabled/>
-                                                </td>
-                                                <td style={{textAlign:'center'}}>
-                                                    <Switch 
-                                                        defaultChecked
-                                                    />
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </HTMLTable>
-                            </Callout>
-                        }/>)
-                    })}
-                </Tabs>
-                </>
-                ):null}
+                {operationObj.parameters ? (
+                    <>
+                        <h3>Test Parameters</h3>
+                        <Tabs vertical>
+                            {["query", "header", "path", "formData", "body"].map((paramType: string, index: number) => {
+                                let params = Object.values(operationObj.parameters as [IParameter])
+                                    .filter((param: IParameter) => param.in === paramType);
+                                return params.length === 0 ? null : (
+                                    <Tab id={index} key={index} title={paramHash[paramType]} panel={
+                                        <Callout>
+                                            <HTMLTable style={{ width: "100%" }}>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <td>Value</td>
+                                                        <td>Random</td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {Object.values(params).map((param: IParameter, index: number) => (
+                                                        <tr key={index}>
+                                                            <td>{param.name}</td>
+                                                            <td>
+                                                                <InputGroup type="text" placeholder={param.type || "unknown"} disabled />
+                                                            </td>
+                                                            <td style={{ textAlign: 'center' }}>
+                                                                <Switch
+                                                                    defaultChecked
+                                                                />
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </HTMLTable>
+                                        </Callout>
+                                    } />)
+                            })}
+                        </Tabs>
+                    </>
+                ) : null}
                 <h3>Valid Responses</h3>
-                <OperationSelect responses={operationObj.responses}/>
+                <OperationSelect responses={operationObj.responses} />
             </div>
         </div>
     )

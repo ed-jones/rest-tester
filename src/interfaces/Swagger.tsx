@@ -54,7 +54,7 @@ export interface IPathItem {
     options?: IOperation,
     head?: IOperation,
     patch?: IOperation,
-    parameters?: [IParameter|IReference],
+    parameters?: [IParameter | IReference],
 }
 
 export interface IOperation {
@@ -65,7 +65,7 @@ export interface IOperation {
     operationId?: string,
     consumes?: [string],
     produces?: [string],
-    parameters?: [IParameter|IReference],
+    parameters?: [IParameter | IReference],
     responses: IResponses,
     schemes: [string],
     deprecated: boolean,
@@ -92,7 +92,7 @@ export interface IReference {
 }
 
 export interface IResponses {
-    default?: [IResponse|IReference]
+    default?: [IResponse | IReference]
 }
 
 export interface IResponse {

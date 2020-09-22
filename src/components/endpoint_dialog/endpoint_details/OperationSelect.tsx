@@ -8,7 +8,7 @@ interface IProps {
 }
 
 export default function OperationSelect(props: IProps) {
-    let defaultState: {items: tag[], tags: tag[]} = {
+    let defaultState: { items: tag[], tags: tag[] } = {
         items: responses.map((response: any) => (
             {
                 value: Number(response.value),
@@ -17,14 +17,14 @@ export default function OperationSelect(props: IProps) {
             }
         )),
         tags: Object.values(props.responses).map((response: any, index: number) => (
-            { 
+            {
                 value: Number(Object.keys(props.responses)[index]),
                 intent: getTagIntent(Number(Object.keys(props.responses)[index])),
                 description: String(response.description),
             }
         )),
     }
-    let [state, setState ] = useState(defaultState);
+    let [state, setState] = useState(defaultState);
 
     interface tag {
         value: number,
@@ -53,7 +53,7 @@ export default function OperationSelect(props: IProps) {
     }
 
     function selectItem(selection: tag[]) {
-        const {items, tags} = state;
+        const { items, tags } = state;
 
         let nextTags = tags.slice();
         let nextItems = items.slice();
@@ -79,16 +79,16 @@ export default function OperationSelect(props: IProps) {
 
     function getTagIntent(value: number): Intent {
         let intent: Intent = "none";
-        if (value < 200){
-            intent=Intent.PRIMARY;
+        if (value < 200) {
+            intent = Intent.PRIMARY;
         } else if (value < 300) {
-            intent=Intent.SUCCESS;
+            intent = Intent.SUCCESS;
         } else if (value < 400) {
-            intent=Intent.WARNING;
+            intent = Intent.WARNING;
         } else if (isNaN(value)) {
-            intent=Intent.NONE;
+            intent = Intent.NONE;
         } else {
-            intent=Intent.DANGER;
+            intent = Intent.DANGER;
         }
         return intent;
     }
@@ -109,7 +109,7 @@ export default function OperationSelect(props: IProps) {
     function filterItem(query: string, item: tag): boolean {
         const normalizedDescription = item.description.toLowerCase();
         const normalizedQuery = query.toLowerCase();
-    
+
         return `${item.value}: ${normalizedDescription}`.indexOf(normalizedQuery) >= 0;
     }
 
@@ -122,8 +122,8 @@ export default function OperationSelect(props: IProps) {
             selectedItems={state.tags}
             onItemSelect={handleItemSelect}
             tagRenderer={(item: any) => item.value}
-            itemRenderer={(item: any, itemProps: IItemRendererProps) => 
-                <MenuItem 
+            itemRenderer={(item: any, itemProps: IItemRendererProps) =>
+                <MenuItem
                     shouldDismissPopover={false}
                     text={`${item.value}: ${item.description}`}
                     active={itemProps.modifiers.active}

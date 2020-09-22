@@ -9,13 +9,13 @@ interface IProps {
 }
 
 export const Item = styled.span({
-    display:"flex", 
-    lineHeight:"18px", 
-    alignItems:"center",
+    display: "flex",
+    lineHeight: "18px",
+    alignItems: "center",
 });
 
 export const ItemRight = styled.span({
-    marginLeft:"auto",
+    marginLeft: "auto",
 });
 
 const defaultState = () => JSON.parse(sessionStorage.getItem('settings') as string) || {
@@ -30,17 +30,17 @@ export default function Settings(props: IProps) {
 
     let [isOpen, closeSettings] = props.useOpen;
     let [darkTheme, toggleDarkTheme] = props.useTheme;
-    let rehydratedDarkTheme = sessionStorage.getItem("darkTheme")==='true' || false;
+    let rehydratedDarkTheme = sessionStorage.getItem("darkTheme") === 'true' || false;
 
     function handleSave(e: any) {
         e.preventDefault();
         sessionStorage.setItem('settings', JSON.stringify(state));
-        Toaster.show({message: "Saved successfully", intent: "success", icon: "floppy-disk"});
+        Toaster.show({ message: "Saved successfully", intent: "success", icon: "floppy-disk" });
         closeSettings();
     }
 
     function handleChange(_num: number, str: string, html: any) {
-        setState({...state, [html.name]: str});
+        setState({ ...state, [html.name]: str });
     }
 
     function handleCancel() {
@@ -54,20 +54,20 @@ export default function Settings(props: IProps) {
             title="Settings"
             isOpen={isOpen}
             onClose={handleCancel}
-            className={rehydratedDarkTheme?Classes.DARK:undefined}
+            className={rehydratedDarkTheme ? Classes.DARK : undefined}
         >
             <div className={Classes.DIALOG_BODY}>
                 <H4>Interface</H4>
-                <Switch 
+                <Switch
                     onClick={toggleDarkTheme}
                     innerLabel="Light"
                     innerLabelChecked="Dark"
                     defaultChecked={darkTheme}
-                    
+
                     label="Theme"
                     alignIndicator={Alignment.RIGHT}
                 />
-                <br/>
+                <br />
                 <H4>Test Parameters</H4>
                 <form>
                     <Item>
@@ -75,8 +75,8 @@ export default function Settings(props: IProps) {
                             Number Max Value
                         </Label>
                         <ItemRight>
-                            <NumericInput 
-                                placeholder="Unlimited" 
+                            <NumericInput
+                                placeholder="Unlimited"
                                 onValueChange={handleChange}
                                 name="maxNum"
                                 value={state.maxNum}
@@ -86,20 +86,20 @@ export default function Settings(props: IProps) {
                     <Item>
                         <Label>Number Min Value</Label>
                         <ItemRight>
-                            <NumericInput 
-                                placeholder="Unlimited" 
+                            <NumericInput
+                                placeholder="Unlimited"
                                 onValueChange={handleChange}
                                 name="minNum"
                                 value={state.minNum}
                             />
                         </ItemRight>
                     </Item>
-                    <br/>
+                    <br />
                     <Item>
                         <Label>String Max Chars</Label>
                         <ItemRight>
-                            <NumericInput 
-                                placeholder="32" 
+                            <NumericInput
+                                placeholder="32"
                                 onValueChange={handleChange}
                                 name="maxStr"
                                 value={state.maxStr}
@@ -109,28 +109,28 @@ export default function Settings(props: IProps) {
                     <Item>
                         <Label>String Min Chars</Label>
                         <ItemRight>
-                            <NumericInput 
-                                placeholder="0" 
-                                min={0} 
+                            <NumericInput
+                                placeholder="0"
+                                min={0}
                                 onValueChange={handleChange}
                                 name="minStr"
                                 value={state.minStr}
                             />
                         </ItemRight>
                     </Item>
-                    <br/>
+                    <br />
                     <Item>
                         <ItemRight>
-                            <Button 
-                                intent="danger" 
+                            <Button
+                                intent="danger"
                                 icon="delete"
                                 onClick={handleCancel}
                             >
                                 Cancel
                             </Button>
                             &nbsp;
-                            <Button 
-                                intent="primary" 
+                            <Button
+                                intent="primary"
                                 icon="floppy-disk"
                                 type="submit"
                                 onClick={handleSave}

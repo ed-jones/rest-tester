@@ -15,7 +15,7 @@ export interface ITests {
     operation: string,
     art: boolean,
     abortOnFail: boolean,
-    maxTests: number|undefined,
+    maxTests: number | undefined,
     params?: Array<{
         name: string,
         value: string,
@@ -30,14 +30,14 @@ export interface ITests {
 }
 
 const EndpointDetailsPanel = (props: IProps, handleRunTests: any) => (
-    <EndpointDetails {...props} 
-        handleRunTests={handleRunTests} 
+    <EndpointDetails {...props}
+        handleRunTests={handleRunTests}
     />
 );
 
 const EndpointTestsPanel = (props: IProps, handleCancelTests: any, testConfig: ITests) => (
-    <EndpointTests {...props} 
-        handleCancelTests={handleCancelTests} 
+    <EndpointTests {...props}
+        handleCancelTests={handleCancelTests}
         testConfig={testConfig}
     />
 );
@@ -48,16 +48,18 @@ export default function EndpointDialog(props: IProps) {
         panel: EndpointDetailsPanel(props, handleRunTests),
     });
 
-    let rehydratedDarkTheme = sessionStorage.getItem("darkTheme")==='true' || false;
+    let rehydratedDarkTheme = sessionStorage.getItem("darkTheme") === 'true' || false;
 
     function handleRunTests(testConfig: ITests) {
-        setState({...state, 
+        setState({
+            ...state,
             panel: EndpointTestsPanel(props, handleCancelTests, testConfig),
         });
     }
 
     function handleCancelTests() {
-        setState({...state, 
+        setState({
+            ...state,
             panel: EndpointDetailsPanel(props, handleRunTests),
         });
     }
@@ -68,8 +70,8 @@ export default function EndpointDialog(props: IProps) {
             title={`Test Endpoint "${props.endpoint}"`}
             isOpen={isOpen}
             onClose={() => handleClose()}
-            className={rehydratedDarkTheme?Classes.DARK:undefined}
-            style={{width:"600px"}}
+            className={rehydratedDarkTheme ? Classes.DARK : undefined}
+            style={{ width: "600px" }}
         >
             {state.panel}
         </Dialog>

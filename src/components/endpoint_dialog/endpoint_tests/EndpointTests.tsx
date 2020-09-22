@@ -23,10 +23,10 @@ export default function EndpointTests(props: IProps) {
             return "";
         }
 
-        let max = param.max||globalTestConfig?.maxNum||1000000;
-        let min = param.min||globalTestConfig?.minNum||-1000000;
+        let max = param.max || globalTestConfig?.maxNum || 1000000;
+        let min = param.min || globalTestConfig?.minNum || -1000000;
 
-        switch(param.type) {
+        switch (param.type) {
             case "number":
                 return generateRandomNumber(max, min);
             case "integer":
@@ -38,14 +38,14 @@ export default function EndpointTests(props: IProps) {
             case "object":
                 return; // !TODO
             default:
-                max = param.max||globalTestConfig?.maxStr||32;
-                min = param.min||globalTestConfig?.minStr||0;
+                max = param.max || globalTestConfig?.maxStr || 32;
+                min = param.min || globalTestConfig?.minStr || 0;
                 return generateRandomString(max, min);
         }
     }
 
     function generateRandomBoolean(): boolean {
-        return Math.round(Math.random())===1;
+        return Math.round(Math.random()) === 1;
     }
 
     function generateRandomNumber(max: number, min: number): number {
@@ -67,31 +67,31 @@ export default function EndpointTests(props: IProps) {
 
     return (
         <div className={Classes.DIALOG_BODY}>
-            <div style={{display:"flex", alignItems:"center"}}>
-                <h3 style={{margin:0}}>
+            <div style={{ display: "flex", alignItems: "center" }}>
+                <h3 style={{ margin: 0 }}>
                     Running Tests...
                 </h3>
-                <Button 
-                    style={{marginLeft:"auto"}} 
-                    intent="danger" 
+                <Button
+                    style={{ marginLeft: "auto" }}
+                    intent="danger"
                     icon="delete"
                     onClick={props.handleCancelTests}
                     text="Cancel"
                 />
             </div>
-            <br/>
-            <ProgressBar/>
-            <br/>
-            <Callout style={{height:"250px", overflowY: "scroll"}}>
-                <ul style={{listStyle:"none", padding:0, margin:0}}>
+            <br />
+            <ProgressBar />
+            <br />
+            <Callout style={{ height: "250px", overflowY: "scroll" }}>
+                <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
                     {[...Array(10)].map(() => (
                         <li>
-                        {operationName} {completeURL}
-                        {parameters?.map((param) => (
-                            param.in==="query"?(
-                                `?${param.name}=${generateParam(param)}`
-                            ):undefined
-                        ))}
+                            {operationName} {completeURL}
+                            {parameters?.map((param) => (
+                                param.in === "query" ? (
+                                    `?${param.name}=${generateParam(param)}`
+                                ) : undefined
+                            ))}
                         </li>
                     ))}
                 </ul>
