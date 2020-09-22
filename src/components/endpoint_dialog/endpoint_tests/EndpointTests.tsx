@@ -136,7 +136,7 @@ function runART(_testConfig: ITests, _url: string): Promise<boolean> {  // art f
     }
   });
 
-  return new Promise(() => false);
+  return testEndpoint(`${_url}${artQueryParams}`, _testConfig.responses);
 }
 
 function calcHash(value: any) {
