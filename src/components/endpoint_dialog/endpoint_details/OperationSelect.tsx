@@ -5,20 +5,27 @@ import { Intent, MenuItem } from '@blueprintjs/core';
 
 interface IProps {
     responses: any,
+    handleChange: any,
+}
+
+export interface ITag {
+    value: number|"default",
+    intent: Intent,
+    description: string,
 }
 
 export default function OperationSelect(props: IProps) {
-    let defaultState: { items: tag[], tags: tag[] } = {
+    let defaultState: { items: ITag[], tags: ITag[] } = {
         items: responses.map((response: any) => (
             {
-                value: Number(response.value),
+                value: Number(response.value)||"default",
                 intent: getTagIntent(Number(response.value)),
                 description: String(response.description),
             }
         )),
         tags: Object.values(props.responses).map((response: any, index: number) => (
             {
-                value: Number(Object.keys(props.responses)[index]),
+                value: Number(Object.keys(props.responses)[index])||"default",
                 intent: getTagIntent(Number(Object.keys(props.responses)[index])),
                 description: String(response.description),
             }
@@ -26,25 +33,19 @@ export default function OperationSelect(props: IProps) {
     }
     let [state, setState] = useState(defaultState);
 
-    interface tag {
-        value: number,
-        intent: Intent,
-        description: string,
+    function arrayContainsTag(tags: ITag[], containsTag: ITag) {
+        return tags.filter((tag: ITag) => tag.value === containsTag.value).length > 0;
     }
 
-    function arrayContainsTag(tags: tag[], containsTag: tag) {
-        return tags.filter((tag: tag) => tag.value === containsTag.value).length > 0;
+    function getSelectedTagIndex(item: ITag) {
+        return state.tags.map((tag: ITag) => tag.value).indexOf(item.value);
     }
 
-    function getSelectedTagIndex(item: tag) {
-        return state.tags.map((tag: tag) => tag.value).indexOf(item.value);
-    }
-
-    function isItemSelected(item: tag) {
+    function isItemSelected(item: ITag) {
         return arrayContainsTag(state.tags, item);
     }
 
-    function handleItemSelect(tag: tag) {
+    function handleItemSelect(tag: ITag) {
         if (!isItemSelected(tag)) {
             selectItem([tag]);
         } else {
@@ -52,7 +53,7 @@ export default function OperationSelect(props: IProps) {
         }
     }
 
-    function selectItem(selection: tag[]) {
+    function selectItem(selection: ITag[]) {
         const { items, tags } = state;
 
         let nextTags = tags.slice();
@@ -66,6 +67,7 @@ export default function OperationSelect(props: IProps) {
             tags: nextTags,
             items: nextItems,
         });
+        handleChange(nextTags);
     }
 
     function deselectItem(index: number) {
@@ -75,6 +77,17 @@ export default function OperationSelect(props: IProps) {
             tags: filteredTags,
             items: state.items,
         });
+        handleChange(filteredTags);
+    }
+
+    function handleChange(tags: ITag[]) {
+        props.handleChange({
+            target: {
+                name: "responses",
+                type: "tags",
+                value: tags.map((tag: ITag) => Number(tag.value)||"default"),
+              }
+        })
     }
 
     function getTagIntent(value: number): Intent {
@@ -102,11 +115,11 @@ export default function OperationSelect(props: IProps) {
         deselectItem(index);
     }
 
-    function areItemsEqual(itemA: tag, itemB: tag) {
+    function areItemsEqual(itemA: ITag, itemB: ITag) {
         return itemA.value === itemB.value;
     }
 
-    function filterItem(query: string, item: tag): boolean {
+    function filterItem(query: string, item: ITag): boolean {
         const normalizedDescription = item.description.toLowerCase();
         const normalizedQuery = query.toLowerCase();
 
@@ -129,7 +142,7 @@ export default function OperationSelect(props: IProps) {
                     active={itemProps.modifiers.active}
                     onClick={itemProps.handleClick}
                     icon={isItemSelected(item) ? "tick" : "blank"}
-                    key={item}
+                    key={item.value}
                 />}
             tagInputProps={{
                 tagProps: getTagProps,
