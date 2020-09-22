@@ -5,7 +5,6 @@ import { Classes, Colors, Button, Icon } from "@blueprintjs/core";
 import Settings from "./components/Settings";
 import { FocusStyleManager } from "@blueprintjs/core";
 
-
 const App = () => {
   let rehydratedDarkTheme = sessionStorage.getItem("darkTheme")==='true' || false;
   let [darkTheme, setDarkTheme] = useState(rehydratedDarkTheme);
@@ -14,7 +13,7 @@ const App = () => {
 
   function toggleDarkTheme() {
     sessionStorage.setItem('darkTheme', String(!darkTheme));
-    setDarkTheme(!darkTheme)
+    setDarkTheme(!darkTheme);
   }
 
   return (

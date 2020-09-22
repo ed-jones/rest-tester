@@ -15,32 +15,28 @@ const emptySwagger: Swagger = {
 };
 
 export default function SwaggerInput() {
-    let [schemaURL, setSchemaURL] = useState("https://api.apis.guru/v2/specs/bbc.co.uk/1.0.0/swagger.yaml");
-    let [schema, setSchema] = useState(emptySwagger);
-    let [error, setError] = useState(false);
-    let [loading, setLoading] = useState(false);
-
+    let [state, setState] = useState({
+        schemaURL: "https://api.apis.guru/v2/specs/bbc.co.uk/1.0.0/swagger.yaml",
+        schema: emptySwagger,
+        error: false,
+        loading: false,
+    });
     function handleSubmit(event: any) {
         event.preventDefault();
-        setLoading(true);
-        setSchema(emptySwagger);
-        SwaggerParser.validate(schemaURL)
+        setState({...state, loading: true, schema: emptySwagger});
+        SwaggerParser.validate(state.schemaURL)
         .then(e => {
             Toaster.show({message: "Successfully Validated", intent: "success", icon: "tick-circle"});
-            setSchema(e);
-            console.log(e);
-            setError(false);
-            setLoading(false);
+            setState({...state, error: false, loading: false, schema: e});
         })
         .catch(e => {
-            Toaster.show({message: e.message, intent: "danger", icon: "error", onDismiss: () => setError(false)});
-            setError(true);
-            setLoading(false);
+            Toaster.show({message: e.message, intent: "danger", icon: "error", onDismiss: () => setState({...state, error: false})});
+            setState({...state, error: true, loading: false});
         });
     }
 
     function handleChange(event: any) {
-        setSchemaURL(event.target.value);
+        setState({...state, schema: event.target.value});
     }
 
     return (
@@ -51,14 +47,14 @@ export default function SwaggerInput() {
                         <InputGroup 
                             type="text"
                             placeholder="http://example.com/swagger.yaml"
-                            value={schemaURL}
+                            value={state.schemaURL}
                             onChange={handleChange}
                             fill
-                            intent={error?"danger":schema !== emptySwagger?"success":"none"}
+                            intent={state.error?"danger":state.schema !== emptySwagger?"success":"none"}
                         />
                         <Button 
                             intent="success"
-                            loading={loading}
+                            loading={state.loading}
                             text="Validate"
                             icon="tick"
                             type="submit"
@@ -66,18 +62,18 @@ export default function SwaggerInput() {
                     </ControlGroup>
                 </FormGroup>
             </form>
-            {schema !== emptySwagger ? 
+            {state.schema !== emptySwagger ? 
             <div>
                 <H3>
-                    {schema.info.title}
+                    {state.schema.info.title}
                 </H3>
-                    {Object.values(schema.paths).map((path: any, index: number) => (
+                    {Object.values(state.schema.paths).map((path: any, index: number) => (
                         <div key={index}>
                             <EndpointCard 
-                                schemes={schema.schemes||[(new URL(schemaURL)).protocol]}
-                                baseURL={schema.host||(new URL(schemaURL)).hostname} 
+                                schemes={state.schema.schemes||[(new URL(state.schemaURL)).protocol]}
+                                baseURL={state.schema.host||(new URL(state.schemaURL)).hostname} 
                                 path={path} 
-                                endpoint={Object.keys(schema.paths)[index]}
+                                endpoint={Object.keys(state.schema.paths)[index]}
                             />
                             <br/>
                         </div>
