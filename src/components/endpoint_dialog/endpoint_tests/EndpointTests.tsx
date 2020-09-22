@@ -136,8 +136,6 @@ function runART(_testConfig: ITests, _url: string): Promise<boolean> {  // art f
   return new Promise(() => false);
 }
 
-<<<<<<< Updated upstream
-=======
 function calcHashVals(value: string) {
     let hashVal = 0;
     if (value.length == 0) {
@@ -155,7 +153,6 @@ function calcHashVals(value: string) {
     })
 }
 
->>>>>>> Stashed changes
 function testEndpoint(
   url: string,
   responses: (number | "default")[],
