@@ -34,7 +34,14 @@ export default function EndpointTests(props: IProps) {
             case "boolean":
                 return generateRandomBoolean();
             case "array":
-                return; // !TODO
+                let maxArr = param.max||globalTestConfig?.maxArr||10;
+                let minArr = param.min||globalTestConfig?.minArr||0;
+
+                let maxStr = param.max||globalTestConfig?.maxStr||32;
+                let minStr = param.min||globalTestConfig?.minStr||0;
+
+                return generateRandomArray(maxArr, minArr, maxStr, minStr);
+
             case "object":
                 return; // !TODO
             default:
@@ -57,12 +64,21 @@ export default function EndpointTests(props: IProps) {
         let randomString = "";
         [...Array(Math.round(randomLength))].forEach(() => {
             randomString += generateRandomChar();
-        })
+        });
         return randomString;
     }
 
     function generateRandomChar(): string {
         return Math.random().toString(36).substr(2, 1);
+    }
+
+    function generateRandomArray(maxArr: number, minArr: number, maxStr: number, minStr: number): string[] {
+        let randomLength = generateRandomNumber(maxArr, minArr);
+        let arr = [];
+        for (let i = 0; i < randomLength; i++) {
+            arr.push(generateRandomString(maxStr, minStr));
+        }
+        return arr;
     }
 
     return (

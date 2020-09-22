@@ -23,7 +23,9 @@ const defaultState = () => JSON.parse(sessionStorage.getItem('settings') as stri
     minNum: undefined,
     maxStr: undefined,
     minStr: undefined,
-}
+    maxArr: undefined,
+    minArr: undefined,
+};
 
 export default function Settings(props: IProps) {
     let [state, setState] = useState(defaultState);
@@ -115,6 +117,30 @@ export default function Settings(props: IProps) {
                                 onValueChange={handleChange}
                                 name="minStr"
                                 value={state.minStr}
+                            />
+                        </ItemRight>
+                    </Item>
+                    <br />
+                    <Item>
+                        <Label>Array Max Length</Label>
+                        <ItemRight>
+                            <NumericInput
+                                placeholder="10"
+                                onValueChange={handleChange}
+                                name="maxArr"
+                                value={state.maxArr}
+                            />
+                        </ItemRight>
+                    </Item>
+                    <br />
+                    <Item>
+                        <Label>Array Min Length</Label>
+                        <ItemRight>
+                            <NumericInput
+                                placeholder="10"
+                                onValueChange={handleChange}
+                                name="maxArr"
+                                value={state.maxArr}
                             />
                         </ItemRight>
                     </Item>
