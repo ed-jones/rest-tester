@@ -11,10 +11,17 @@ interface IProps {
     testConfig: ITests,
 }
 
+let cancelTesting = false;
+
 export default function EndpointTests(props: IProps) {
     let completeURL = `${props.baseURL}${props.endpoint}`;
-
+    cancelTesting = false;
     runTests(props.testConfig, completeURL);
+
+    function handleCancelTests() {
+        cancelTesting = true;
+        props.handleCancelTests();
+    }
 
     return (
         <div className={Classes.DIALOG_BODY}>
@@ -26,7 +33,7 @@ export default function EndpointTests(props: IProps) {
                     style={{ marginLeft: "auto" }}
                     intent="danger"
                     icon="delete"
-                    onClick={props.handleCancelTests}
+                    onClick={handleCancelTests}
                     text="Cancel"
                 />
             </div>
@@ -52,7 +59,7 @@ export default function EndpointTests(props: IProps) {
 }
 
 function runTests(testConfig: ITests, completeURL: string, depth: number = 0) {
-    if (depth === testConfig?.maxTests) {
+    if (depth === testConfig?.maxTests || cancelTesting) {
         return;
     }
 
