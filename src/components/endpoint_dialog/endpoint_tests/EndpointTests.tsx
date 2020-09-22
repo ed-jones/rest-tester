@@ -132,7 +132,13 @@ function generateValue(param: any, valueBounds: any): any {
         case "boolean":
             return generateRandomBoolean();
         case "array":
-            return; // !TODO
+            let maxArr = param.max||valueBounds?.maxArr||10;
+            let minArr = param.min||valueBounds?.minArr||0;
+
+            let maxStr = param.max||valueBounds?.maxStr||32;
+            let minStr = param.min||valueBounds?.minStr||0;
+
+            return generateRandomArray(maxArr, minArr, maxStr, minStr);
         case "object":
             return; // !TODO
         default:
@@ -161,4 +167,13 @@ function generateRandomString(max: number, min: number): string {
 
 function generateRandomChar(): string {
     return Math.random().toString(36).substr(2, 1);
+}
+
+function generateRandomArray(maxArr: number, minArr: number, maxStr: number, minStr: number): string[] {
+    let randomLength = generateRandomNumber(maxArr, minArr);
+    let arr = [];
+    for (let i = 0; i < randomLength; i++) {
+        arr.push(generateRandomString(maxStr, minStr));
+    }
+    return arr;
 }
