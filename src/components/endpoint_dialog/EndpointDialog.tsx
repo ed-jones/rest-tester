@@ -16,17 +16,19 @@ export interface ITests {
     art: boolean,
     abortOnFail: boolean,
     maxTests: number | undefined,
-    params?: Array<{
-        name: string,
-        value: string,
-        random: boolean,
-        in: string,
-        max?: number,
-        min?: number,
-        type?: string,
-        required?: boolean,
-    }>,
+    params?: Array<ITestParam>,
     responses: number[],
+}
+
+export interface ITestParam {
+    name: string,
+    value: string,
+    random: boolean,
+    in: string,
+    max?: number,
+    min?: number,
+    type?: string,
+    required?: boolean,
 }
 
 const EndpointDetailsPanel = (props: IProps, handleRunTests: any) => (
