@@ -98,7 +98,7 @@ function runRT(testConfig: ITests, url: string): Promise<boolean> {
   return testEndpoint(`${url}${queryParams}`, testConfig.responses);
 }
 
-let artArray = []; // empty array to be populated
+let artArray: string[] = []; // empty array to be populated
 
 function runART(_testConfig: ITests, _url: string): Promise<boolean> {  // art func
   const artTestParams = _testConfig.params; // stores the parameters from the user
@@ -110,6 +110,7 @@ function runART(_testConfig: ITests, _url: string): Promise<boolean> {  // art f
     // console.log(genVal);
     artArray.push(genVal);  // push random val to the array
     console.log(genVal, " genVal pushed to array.");
+    calcHashVals(genVal);
     // compare the distance between non numeric vals
     // switch (param.in) {
     //   case "query":
@@ -133,6 +134,23 @@ function runART(_testConfig: ITests, _url: string): Promise<boolean> {  // art f
   });
 
   return new Promise(() => false);
+}
+
+function calcHashVals(value: string) {
+    let hashVal = 0;
+    if (value.length == 0) {
+      return hashVal;
+    }
+    // compare parameter value to array values
+    artArray.forEach((value) => {
+        let char;
+        for(let i=0; i<value.length; i++) {
+            char = value.charCodeAt(i);
+            hashVal = ((hashVal << 5) - hashVal) + char;
+            hashVal = hashVal & hashVal;
+        }
+        console.log(hashVal);
+    })
 }
 
 function testEndpoint(
