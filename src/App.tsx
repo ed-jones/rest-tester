@@ -5,21 +5,27 @@ import { Classes, Colors, Button, Icon } from "@blueprintjs/core";
 import Settings from "./components/Settings";
 import { FocusStyleManager } from "@blueprintjs/core";
 
+FocusStyleManager.onlyShowFocusOnTabs();
+
 const App = () => {
-  let rehydratedDarkTheme = sessionStorage.getItem("darkTheme")==='true' || false;
-  let [darkTheme, setDarkTheme] = useState(rehydratedDarkTheme);
-  let [settingsOpen, setSettingsOpen] = useState(false);
-  FocusStyleManager.onlyShowFocusOnTabs();
+  let [state, setState] = useState({
+    darkTheme: sessionStorage.getItem("darkTheme")==='true',
+    settingsOpen: false,
+  })
 
   function toggleDarkTheme() {
-    sessionStorage.setItem('darkTheme', String(!darkTheme));
-    setDarkTheme(!darkTheme);
+    sessionStorage.setItem('darkTheme', String(!state.darkTheme));
+    setState({...state, darkTheme: !state.darkTheme});
+  }
+
+  function closeSettings() {
+    setState({...state, settingsOpen: false});
   }
 
   return (
-    <div className={darkTheme?Classes.DARK:undefined}>
+    <div className={state.darkTheme?Classes.DARK:undefined}>
       {document.getElementsByTagName("body")[0]
-      .setAttribute("style", `background-color: ${darkTheme?Colors.DARK_GRAY5:Colors.LIGHT_GRAY5}`)}
+      .setAttribute("style", `background-color: ${state.darkTheme?Colors.DARK_GRAY5:Colors.LIGHT_GRAY5}`)}
       <Container>
         <div style={{display:'flex',alignItems:'center'}}>
             <h1>
@@ -28,7 +34,7 @@ const App = () => {
             <Button 
               minimal 
               style={{margin:"0 0 0 auto"}} 
-              onClick={() => setSettingsOpen(true)}
+              onClick={() => setState({...state, settingsOpen: true})}
               icon={
                 <Icon 
                   iconSize={24} 
@@ -40,8 +46,8 @@ const App = () => {
         <SwaggerInput/>
       </Container>
       <Settings 
-        useOpen={[settingsOpen, setSettingsOpen]} 
-        useTheme={[darkTheme, toggleDarkTheme]}
+        useOpen={[state.settingsOpen, closeSettings]} 
+        useTheme={[state.darkTheme, toggleDarkTheme]}
       />
     </div>
   )

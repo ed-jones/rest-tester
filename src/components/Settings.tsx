@@ -28,7 +28,7 @@ const defaultState = () => JSON.parse(sessionStorage.getItem('settings') as stri
 export default function Settings(props: IProps) {
     let [state, setState] = useState(defaultState);
 
-    let [isOpen, setOpen] = props.useOpen;
+    let [isOpen, closeSettings] = props.useOpen;
     let [darkTheme, toggleDarkTheme] = props.useTheme;
     let rehydratedDarkTheme = sessionStorage.getItem("darkTheme")==='true' || false;
 
@@ -36,7 +36,7 @@ export default function Settings(props: IProps) {
         e.preventDefault();
         sessionStorage.setItem('settings', JSON.stringify(state));
         Toaster.show({message: "Saved successfully", intent: "success", icon: "floppy-disk"});
-        setOpen(false);
+        closeSettings();
     }
 
     function handleChange(_num: number, str: string, html: any) {
@@ -44,7 +44,7 @@ export default function Settings(props: IProps) {
     }
 
     function handleCancel() {
-        setOpen(false);
+        closeSettings();
         setState(defaultState);
     }
 

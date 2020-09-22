@@ -14,14 +14,14 @@ import {
         Label,
         NumericInput,
     } from "@blueprintjs/core";
-import { path_item, parameter, operation } from '../interfaces/Swagger';
-import { operationHash } from './EndpointCard';
+import { IPathItem, IParameter, IOperation, IOperationVerb } from '../interfaces/Swagger';
+import { OperationIntentHashMap } from './EndpointCard';
 import { Item, ItemRight } from './Settings';
 import OperationSelect from './OperationSelect';
 import { ITests } from './EndpointDialog';
 
 interface EndpointDetailsProps {
-    path: path_item,
+    path: IPathItem,
     endpoint: string,
     handleRunTests: any,
     baseURL: string,
@@ -36,7 +36,7 @@ export default function EndpointDetails(props: EndpointDetailsProps) {
                     <Tab id={key} key={key} title={operationName.toUpperCase()} panelClassName={Classes.FILL} panel={
                         <Card>
                         <EndpointDetail 
-                            operation={[operationName, Object.values(props.path)[key]]}
+                            operation={[operationName as IOperationVerb, Object.values(props.path)[key]]}
                             completeURL={completeURL}
                             handleRunTests={props.handleRunTests}
                         />
@@ -49,7 +49,7 @@ export default function EndpointDetails(props: EndpointDetailsProps) {
 }
 
 interface EndpointDetailProps {
-    operation: [string, operation],
+    operation: [IOperationVerb, IOperation],
     completeURL: string,
     handleRunTests: any
 }
@@ -70,7 +70,7 @@ export function EndpointDetail(props: EndpointDetailProps) {
         art: false,
         abortOnFail: false,
         maxTests: undefined,
-        params: (operationObj.parameters as [parameter]).map((value: parameter) => ({
+        params: (operationObj.parameters as [IParameter]).map((value: IParameter) => ({
             name: value.name,
             value: "",
             random: false,
@@ -87,7 +87,7 @@ export function EndpointDetail(props: EndpointDetailProps) {
     return (
         <div>
             <ControlGroup>
-                <Button intent={operationHash[operationName]}>
+                <Button intent={OperationIntentHashMap[operationName]}>
                     {operationName.toUpperCase()}
                 </Button>
                 <InputGroup fill type="text" value={props.completeURL}/>
@@ -130,8 +130,8 @@ export function EndpointDetail(props: EndpointDetailProps) {
                 <h3>Test Parameters</h3>
                 <Tabs vertical>
                     {["query", "header", "path", "formData", "body"].map((paramType: string, index: number) => {
-                        let params = Object.values(operationObj.parameters as [parameter])
-                                        .filter((param: parameter) => param.in === paramType);
+                        let params = Object.values(operationObj.parameters as [IParameter])
+                                        .filter((param: IParameter) => param.in === paramType);
                         return params.length === 0?null:(
                         <Tab id={index} key={index} title={paramHash[paramType]} panel={
                             <Callout>
@@ -144,7 +144,7 @@ export function EndpointDetail(props: EndpointDetailProps) {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {Object.values(params).map((param: parameter, index: number) => (
+                                        {Object.values(params).map((param: IParameter, index: number) => (
                                             <tr key={index}>
                                                 <td>{param.name}</td>
                                                 <td>

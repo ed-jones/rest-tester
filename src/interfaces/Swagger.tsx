@@ -3,81 +3,81 @@
     Based on https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md
 */
 
-export default interface Swagger {
+export default interface ISwagger {
     swagger: string,
-    info: info
+    info: IInfo
     host?: string,
     basePath?: string,
     schemes?: [string],
     consumes?: [string],
     produces?: [string],
-    paths: paths,
-    definitions?: definitions,
-    parameters?: parameters_definitions,
-    responses?: responses_definitions,
-    securityDefinitions?: security_definitions,
-    security?: [security_requirement],
-    tags?: [tag],
-    externalDocs?: external_docs,
+    paths: IPaths,
+    definitions?: IDefinitions,
+    parameters?: IParametersDefinitions,
+    responses?: IResponsesDefinitions,
+    securityDefinitions?: ISecurityDefinitions,
+    security?: [ISecurityRequirement],
+    tags?: [ITag],
+    externalDocs?: IExternalDocs,
 }
 
-interface info {
+export interface IInfo {
     title: string,
     description?: string,
     termsOfService?: string,
-    contact?: contact,
-    license?: license,
+    contact?: IContact,
+    license?: ILicense,
     version: string,
 }
 
-interface contact {
+export interface IContact {
     name?: string,
     url?: string,
     email?: string,
 }
 
-interface license {
+export interface ILicense {
     name: string,
     url?: string,
 }
 
-export interface paths {
-    [path: string]: path_item,
+export interface IPaths {
+    [path: string]: IPathItem,
 }
 
-export interface path_item {
+export interface IPathItem {
     $ref?: string,
-    get?: operation,
-    put?: operation,
-    post?: operation,
-    delete?: operation,
-    options?: operation,
-    head?: operation,
-    patch?: operation,
-    parameters?: [parameter|reference],
+    get?: IOperation,
+    put?: IOperation,
+    post?: IOperation,
+    delete?: IOperation,
+    options?: IOperation,
+    head?: IOperation,
+    patch?: IOperation,
+    parameters?: [IParameter|IReference],
 }
 
-export interface operation {
+export interface IOperation {
     tags?: [string],
     summary?: string,
     description?: string,
-    externalDocs?: external_docs,
+    externalDocs?: IExternalDocs,
     operationId?: string,
     consumes?: [string],
     produces?: [string],
-    parameters?: [parameter|reference],
-    responses: responses,
+    parameters?: [IParameter|IReference],
+    responses: IResponses,
     schemes: [string],
     deprecated: boolean,
-    security: security_requirement,
+    security: ISecurityRequirement,
 }
 
-interface external_docs {
+export interface IExternalDocs {
     description?: string,
     url?: string,
 }
 
-export interface parameter {
+export interface IParameter {
     name: string,
     in: string,
     description?: string,
@@ -87,30 +87,30 @@ export interface parameter {
     min?: number,
 }
 
-export interface reference {
+export interface IReference {
     $ref: string,
 }
 
-interface responses {
-    default?: [response|reference]
+export interface IResponses {
+    default?: [IResponse|IReference]
 }
 
-interface response {
+export interface IResponse {
     description: string,
-    schema?: schema,
-    headers?: headers,
-    examples?: example,
+    schema?: ISchema,
+    headers?: IHeaders,
+    examples?: IExample,
 }
 
-interface schema {
+export interface ISchema {
     discriminator?: string,
     readOnly: boolean,
-    xml: xml,
-    externalDocs: external_docs,
+    xml: IXml,
+    externalDocs: IExternalDocs,
     example: any,
 }
 
-interface xml {
+export interface IXml {
     name?: string,
     namespace?: string,
     prefix?: string,
@@ -118,15 +118,15 @@ interface xml {
     wrapped?: boolean,
 }
 
-interface headers {
-    [name: string]: header,
+export interface IHeaders {
+    [name: string]: IHeader,
 }
 
-interface header {
+export interface IHeader {
     description?: string,
     type: string,
     format: string,
-    items: items,
+    items: IItems,
     collectionFormat: string,
     default: any,
     maximum?: number,
@@ -136,17 +136,17 @@ interface header {
     maxLength?: number,
     minLength?: number,
     pattern?: string,
-    maxItems?: number,
-    minItems?: number,
-    uniqueItems?: boolean,
+    maxIItems?: number,
+    minIItems?: number,
+    uniqueIItems?: boolean,
     enum?: [any],
     multipleOf?: number,
 }
 
-interface items {
+export interface IItems {
     type: string,
     format?: string,
-    items: items,
+    items: IItems,
     collectionFormat?: string,
     default?: any,
     maximum?: number,
@@ -156,38 +156,38 @@ interface items {
     maxLength?: number,
     minLength?: number,
     pattern?: string,
-    maxItems?: number,
-    minItems?: number,
-    uniqueItems?: boolean,
+    maxIItems?: number,
+    minIItems?: number,
+    uniqueIItems?: boolean,
     enum?: [any],
     multipleOf?: number,
 }
 
-interface example {
+export interface IExample {
     [mime_type: string]: any,
 }
 
-interface security_requirement {
+export interface ISecurityRequirement {
     [name: string]: [string],
 }
 
-interface definitions {
-    [name: string]: schema,
+export interface IDefinitions {
+    [name: string]: ISchema,
 }
 
-interface parameters_definitions {
-    [name: string]: parameter,
+export interface IParametersDefinitions {
+    [name: string]: IParameter,
 }
 
-interface responses_definitions {
-    [name: string]: response,
+export interface IResponsesDefinitions {
+    [name: string]: IResponse,
 }
 
-interface security_definitions {
-    [name: string]: security_scheme,
+export interface ISecurityDefinitions {
+    [name: string]: ISecurityScheme,
 }
 
-interface security_scheme {
+export interface ISecurityScheme {
     type: string,
     description?: string,
     name: string,
@@ -195,15 +195,18 @@ interface security_scheme {
     flow: string,
     authorizationUrl: string,
     tokenUrl: string,
-    scopes: scopes,
+    scopes: IScopes,
 }
 
-interface scopes {
+export interface IScopes {
     [name: string]: string
 }
 
-interface tag {
+export interface ITag {
     name: string,
     description?: string,
-    externalDocs?: external_docs,
+    externalDocs?: IExternalDocs,
 }
+
+export type IOperationVerb = "get" | "put" | "post" | "delete" | "options" | "head" | "patch";
+

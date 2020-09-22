@@ -26,11 +26,20 @@ export default function SwaggerInput() {
         setState({...state, loading: true, schema: emptySwagger});
         SwaggerParser.validate(state.schemaURL)
         .then(e => {
-            Toaster.show({message: "Successfully Validated", intent: "success", icon: "tick-circle"});
+            Toaster.show({
+                message: "Successfully Validated", 
+                intent: "success", 
+                icon: "tick-circle"
+            });
             setState({...state, error: false, loading: false, schema: e});
         })
         .catch(e => {
-            Toaster.show({message: e.message, intent: "danger", icon: "error", onDismiss: () => setState({...state, error: false})});
+            Toaster.show({
+                message: e.message, 
+                intent: "danger", 
+                icon: "error", 
+                onDismiss: () => setState({...state, error: false}),
+            });
             setState({...state, error: true, loading: false});
         });
     }

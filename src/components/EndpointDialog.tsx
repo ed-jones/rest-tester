@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Dialog, Classes } from "@blueprintjs/core";
-import { path_item } from '../interfaces/Swagger';
+import { IPathItem } from '../interfaces/Swagger';
 import EndpointDetails from './EndpointDetails';
 import EndpointTests from './EndpointTests';
 
 interface IProps {
-    useOpen: [boolean, React.Dispatch<React.SetStateAction<boolean>>]
-    path: path_item,
+    useOpen: [boolean, any]
+    path: IPathItem,
     endpoint: string,
     baseURL: string,
 }
@@ -29,30 +29,36 @@ export interface ITests {
     responses: number[],
 }
 
+const EndpointDetailsPanel = (props: IProps, handleRunTests: any) => (
+    <EndpointDetails {...props} 
+        handleRunTests={handleRunTests} 
+    />
+);
+
+const EndpointTestsPanel = (props: IProps, handleCancelTests: any, testConfig: ITests) => (
+    <EndpointTests {...props} 
+        handleCancelTests={handleCancelTests} 
+        testConfig={testConfig}
+    />
+);
+
 export default function EndpointDialog(props: IProps) {
-    let [isOpen, setOpen] = props.useOpen;
+    let [isOpen, handleClose] = props.useOpen;
     let [state, setState] = useState({
-        panel: <EndpointDetails {...props} 
-                    handleRunTests={handleRunTests} 
-                />,
+        panel: EndpointDetailsPanel(props, handleRunTests),
     });
 
     let rehydratedDarkTheme = sessionStorage.getItem("darkTheme")==='true' || false;
 
     function handleRunTests(testConfig: ITests) {
         setState({...state, 
-            panel: <EndpointTests {...props} 
-                        handleCancelTests={handleCancelTests} 
-                        testConfig={testConfig}
-                    />
+            panel: EndpointTestsPanel(props, handleCancelTests, testConfig),
         });
     }
 
     function handleCancelTests() {
         setState({...state, 
-            panel: <EndpointDetails {...props} 
-                        handleRunTests={handleRunTests} 
-                    />
+            panel: EndpointDetailsPanel(props, handleRunTests),
         });
     }
 
@@ -61,7 +67,7 @@ export default function EndpointDialog(props: IProps) {
             icon="lab-test"
             title={`Test Endpoint "${props.endpoint}"`}
             isOpen={isOpen}
-            onClose={() => setOpen(false)}
+            onClose={() => handleClose()}
             className={rehydratedDarkTheme?Classes.DARK:undefined}
             style={{width:"600px"}}
         >
