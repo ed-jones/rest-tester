@@ -1,29 +1,21 @@
 import React, { useState } from 'react'
 import SwaggerParser from "@apidevtools/swagger-parser";
 import { InputGroup, ControlGroup, FormGroup, Button, H3 } from "@blueprintjs/core";
-import Swagger from '@interfaces/Swagger';
+import ISwagger from '@interfaces/Swagger';
 import Toaster from '../global/Toaster';
 import EndpointCard from './EndpointCard';
 
-const emptySwagger: Swagger = {
-    swagger: "",
-    info: {
-        title: "",
-        version: "",
-    },
-    paths: {}
-};
-
 export default function SwaggerInput() {
+    let defaultSchema: ISwagger|undefined;
     let [state, setState] = useState({
         schemaURL: "https://api.apis.guru/v2/specs/bbc.co.uk/1.0.0/swagger.yaml",
-        schema: emptySwagger,
+        schema: defaultSchema,
         error: false,
         loading: false,
     });
     function handleSubmit(event: any) {
         event.preventDefault();
-        setState({ ...state, loading: true, schema: emptySwagger });
+        setState({ ...state, loading: true, schema: undefined });
         SwaggerParser.validate(state.schemaURL)
             .then(e => {
                 Toaster.show({
@@ -45,7 +37,7 @@ export default function SwaggerInput() {
     }
 
     function handleChange(event: any) {
-        setState({ ...state, schema: event.target.value });
+        setState({ ...state, schemaURL: event.target.value });
     }
 
     return (
@@ -59,7 +51,7 @@ export default function SwaggerInput() {
                             value={state.schemaURL}
                             onChange={handleChange}
                             fill
-                            intent={state.error ? "danger" : state.schema !== emptySwagger ? "success" : "none"}
+                            intent={state.error ? "danger" : state.schema !== undefined ? "success" : "none"}
                         />
                         <Button
                             intent="success"
@@ -71,23 +63,23 @@ export default function SwaggerInput() {
                     </ControlGroup>
                 </FormGroup>
             </form>
-            {state.schema !== emptySwagger ?
+            {state.schema !== undefined ? (
                 <div>
                     <H3>
-                        {state.schema.info.title}
+                        {(state.schema as ISwagger).info.title}
                     </H3>
-                    {Object.values(state.schema.paths).map((path: any, index: number) => (
+                    {Object.values((state.schema as ISwagger).paths).map((path: any, index: number) => (
                         <div key={index}>
                             <EndpointCard
-                                schemes={state.schema.schemes || [(new URL(state.schemaURL)).protocol]}
-                                baseURL={state.schema.host || (new URL(state.schemaURL)).hostname}
+                                schemes={(state.schema as ISwagger).schemes || [(new URL(state.schemaURL)).protocol]}
+                                baseURL={(state.schema as ISwagger).host || (new URL(state.schemaURL)).hostname}
                                 path={path}
-                                endpoint={Object.keys(state.schema.paths)[index]}
+                                endpoint={Object.keys((state.schema as ISwagger).paths)[index]}
                             />
                             <br />
                         </div>
                     ))}
-                </div> : null}
+                </div> ): null}
         </div>
     )
 }

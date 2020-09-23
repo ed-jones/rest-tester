@@ -32,15 +32,15 @@ export default function EndpointTests(props: IProps) {
     let completeURL = `${props.baseURL}${props.endpoint}`;
 
     props.testConfig.art ? runART(props.testConfig, completeURL) : runRT(props.testConfig, completeURL)
-    .then((res: ITestResult) => {
-        let testResults = state.testResults;
-        testResults.push(res);
-        setState({...state, testResults});
-        if ((!res.result && props.testConfig.abortOnFail) || state.testResults.length === props.testConfig?.maxTests) {
-            props.handleFinishTests(state.testResults);
-        }
-    });
-    
+        .then((res: ITestResult) => {
+            let testResults = state.testResults;
+            testResults.push(res);
+            setState({ ...state, testResults });
+            if ((!res.result && props.testConfig.abortOnFail) || state.testResults.length === props.testConfig?.maxTests) {
+                props.handleFinishTests(state.testResults);
+            }
+        });
+
     return (
         <div className={Classes.DIALOG_BODY}>
             <div style={{ display: "flex", alignItems: "center" }}>
@@ -59,38 +59,38 @@ export default function EndpointTests(props: IProps) {
             <ProgressBar />
             <br />
             <Callout style={{ height: "250px", overflow: "scroll", padding: 0 }}>
-                <HTMLTable condensed style={{tableLayout: "fixed", width:"100%"}}>
+                <HTMLTable condensed style={{ tableLayout: "fixed", width: "100%" }}>
                     <thead>
                         <tr>
-                            <StickyTH style={{width:"15%"}}>Operation</StickyTH>
+                            <StickyTH style={{ width: "15%" }}>Operation</StickyTH>
                             <StickyTH>URL</StickyTH>
-                            <StickyTH style={{width:"15%"}}>Result</StickyTH>
+                            <StickyTH style={{ width: "15%" }}>Result</StickyTH>
                         </tr>
                     </thead>
                     <tbody >
-                    {state.testResults.map((testResult: ITestResult, key: number) => (
-                        <tr key={key}>
-                            <td>
-                                {testResult.operation.toUpperCase()}
-                            </td>
-                            <td style={{wordBreak: "break-all"}}>
-                                {testResult.url}
-                            </td>
-                            <td style={{
-                                color: testResult.result ? (
-                                    state.darkTheme ? Colors.GREEN5 : Colors.GREEN1
-                                ) : (
-                                        state.darkTheme ? Colors.RED5 : Colors.RED1
-                                    )
-                            }}>
-                                {testResult.result ? "Passed" : "Failed"}
-                            </td>
-                        </tr>
-                    ))}
+                        {state.testResults.map((testResult: ITestResult, key: number) => (
+                            <tr key={key}>
+                                <td>
+                                    {testResult.operation.toUpperCase()}
+                                </td>
+                                <td style={{ wordBreak: "break-all" }}>
+                                    {testResult.url}
+                                </td>
+                                <td style={{
+                                    color: testResult.result ? (
+                                        state.darkTheme ? Colors.GREEN5 : Colors.GREEN1
+                                    ) : (
+                                            state.darkTheme ? Colors.RED5 : Colors.RED1
+                                        )
+                                }}>
+                                    {testResult.result ? "Passed" : "Failed"}
+                                </td>
+                            </tr>
+                        ))}
                     </tbody>
                 </HTMLTable>
             </Callout>
-            <br/>
+            <br />
             <Button
                 style={{ marginLeft: "auto" }}
                 intent="success"
