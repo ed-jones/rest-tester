@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Classes, ProgressBar, Button, Callout, HTMLTable, Colors } from "@blueprintjs/core";
 import { IPathItem } from '@interfaces/Swagger';
 import { ITests, ITestParam, ITestResult } from '../EndpointDialog';
