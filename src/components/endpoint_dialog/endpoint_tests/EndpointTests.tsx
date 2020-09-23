@@ -133,15 +133,88 @@ function runRT(testConfig: ITests, url: string): Promise<ITestResult> {
     return testEndpoint(`${url}${queryParams}`, testConfig.operation, testConfig.responses);
 }
 
-function runART(_testConfig: ITests, _url: string): Promise<ITestResult> {
-    const testResult: ITestResult = {
-        operation: "",
-        url: "",
-        result: false,
+// function runART(_testConfig: ITests, _url: string): Promise<ITestResult> {
+//     const testResult: ITestResult = {
+//         operation: "",
+//         url: "",
+//         result: false,
+//     }
+//     return (new Promise(() => testResult));
+// }
+
+
+let artArray: any[] = []; // empty array to be populated
+
+function runART(testConfig: ITests, url: string): Promise<ITestResult> {  // art func
+  const artTestParams = testConfig.params; // stores the parameters from the user
+  const artGlobalSettings = JSON.parse(sessionStorage.getItem("settings") as string);   // gets the settings from the links
+
+  let artQueryParams = ""; // empty string
+  artTestParams?.forEach((param: ITestParam) => {   // loop for each test param
+    let genVal = generateValue(param, artGlobalSettings);   // generates a random value based off the global settings
+    
+    let hash = calcHash(genVal);
+    artArray.push(
+        {"key": genVal, "value": hash}
+    );  // push random val along with hash value to the array
+    
+    // compare the distance between non numeric vals
+    // generate new value based off array
+    let newVal = generateValue({
+        ...param,
+        value: String(compareHash(hash)),
+    }, artGlobalSettings);
+
+    switch (param.in) {
+      case "query":
+        if (newVal !== undefined) {
+          artQueryParams += `?${param.name}=${param.value || newVal}`;
+        }
+        break;
+      case "header":
+        break;
+      case "path":
+        url = url.replace(`{${param.name}}`, newVal);
+        break;
+      case "formData":
+        break;
+      case "body":
+        break;
     }
-    return (new Promise(() => testResult));
+  });
+
+  return testEndpoint(`${url}${artQueryParams}`, testConfig.operation, testConfig.responses);
 }
 
+function calcHash(value: string|number) {
+    let hashVal = 0;
+    if (String(value).length === 0) {
+      return hashVal;
+    }
+    // compare parameter value to array values
+    let char;
+    for(let i=0; i<String(value).length; i++) {
+        char = String(value).charCodeAt(i);
+        hashVal = ((hashVal << 5) - hashVal) + char;
+        hashVal = hashVal & hashVal;
+    }
+
+    return hashVal;
+}
+
+function compareHash(compareVal: number) {
+    let currentHash = compareVal;
+    let maxHash = 0;
+    let index = Object.keys(artArray)[1];   // hash
+    artArray.forEach(val => {
+        if(currentHash >= val[index]) {
+            maxHash = currentHash;
+        } else {
+            maxHash = val[index];
+        }
+    })
+    return maxHash; // furthest away
+}
 function testEndpoint(url: string, method: string, responses: (number | "default")[], header?: any, formData?: any): Promise<ITestResult> {
     let proxyUrl = "https://cors-anywhere.herokuapp.com/" + url;
 
@@ -157,7 +230,7 @@ function testEndpoint(url: string, method: string, responses: (number | "default
         });
 }
 
-function generateValue(param: any, valueBounds: any): any {
+function generateValue(param: ITestParam, valueBounds: any): any {
     if (!param.required && generateRandomBoolean()) {
         return;
     }
