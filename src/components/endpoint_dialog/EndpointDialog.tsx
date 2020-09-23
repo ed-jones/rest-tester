@@ -3,6 +3,7 @@ import { Dialog, Classes } from "@blueprintjs/core";
 import { IPathItem } from '@interfaces/Swagger';
 import EndpointDetails from './endpoint_details/EndpointDetails';
 import EndpointTests from './endpoint_tests/EndpointTests';
+import EndpointResults from './endpoint_results/EndpointResults';
 
 interface IProps {
     useOpen: [boolean, any]
@@ -31,16 +32,30 @@ export interface ITestParam {
     required?: boolean,
 }
 
+export interface ITestResult {
+    operation: string,
+    url: string,
+    result: boolean,
+}
+
 const EndpointDetailsPanel = (props: IProps, handleRunTests: any) => (
     <EndpointDetails {...props}
         handleRunTests={handleRunTests}
     />
 );
 
-const EndpointTestsPanel = (props: IProps, handleCancelTests: any, testConfig: ITests) => (
+const EndpointTestsPanel = (props: IProps, handleCancelTests: any, handleFinishTests: any, testConfig: ITests) => (
     <EndpointTests {...props}
         handleCancelTests={handleCancelTests}
+        handleFinishTests={handleFinishTests}
         testConfig={testConfig}
+    />
+);
+
+const EndpointResultsPanel = (results: ITestResult[], handleCancelTests: any) => (
+    <EndpointResults
+        results={results}
+        handleCancelTests={handleCancelTests}
     />
 );
 
@@ -53,10 +68,9 @@ export default function EndpointDialog(props: IProps) {
     let rehydratedDarkTheme = sessionStorage.getItem("darkTheme") === 'true' || false;
 
     function handleRunTests(testConfig: ITests) {
-        console.log(testConfig);
         setState({
             ...state,
-            panel: EndpointTestsPanel(props, handleCancelTests, testConfig),
+            panel: EndpointTestsPanel(props, handleCancelTests, handleFinishTests, testConfig),
         });
     }
 
@@ -64,6 +78,13 @@ export default function EndpointDialog(props: IProps) {
         setState({
             ...state,
             panel: EndpointDetailsPanel(props, handleRunTests),
+        });
+    }
+
+    function handleFinishTests(results: ITestResult[]) {
+        setState({
+            ...state,
+            panel: EndpointResultsPanel(results, handleCancelTests),
         });
     }
 

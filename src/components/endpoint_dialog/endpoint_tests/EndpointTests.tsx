@@ -1,27 +1,45 @@
-import React from 'react';
-import { Classes, ProgressBar, Button, Callout } from "@blueprintjs/core";
+import React, { useState, useEffect } from 'react';
+import { Classes, ProgressBar, Button, Callout, HTMLTable, Colors } from "@blueprintjs/core";
 import { IPathItem } from '@interfaces/Swagger';
-import { ITests, ITestParam } from '../EndpointDialog';
+import { ITests, ITestParam, ITestResult } from '../EndpointDialog';
+import styled from '@emotion/styled';
 
 interface IProps {
     handleCancelTests: any,
+    handleFinishTests: any,
     path: IPathItem,
     endpoint: string,
     baseURL: string,
     testConfig: ITests,
 }
 
-let cancelTesting = false;
-
 export default function EndpointTests(props: IProps) {
-    let completeURL = `${props.baseURL}${props.endpoint}`;
-    cancelTesting = false;
-    runTests(props.testConfig, completeURL);
+    const emptyResults: ITestResult[] = [];
+    let [state, setState] = useState({
+        darkTheme: sessionStorage.getItem("darkTheme") === 'true',
+        testResults: emptyResults,
+    });
+    const StickyTH = styled.th({
+        position: 'sticky',
+        top: '0',
+        backgroundColor: state.darkTheme ? Colors.DARK_GRAY5 : Colors.LIGHT_GRAY5,
+    });
 
-    function handleCancelTests() {
-        cancelTesting = true;
+    function cancelTests() {
         props.handleCancelTests();
     }
+
+    let completeURL = `${props.baseURL}${props.endpoint}`;
+
+    props.testConfig.art ? runART(props.testConfig, completeURL) : runRT(props.testConfig, completeURL)
+    .then((res: ITestResult) => {
+        let testResults = state.testResults;
+        testResults.push(res);
+        setState({...state, testResults});
+        if ((!res.result && props.testConfig.abortOnFail) || state.testResults.length === props.testConfig?.maxTests) {
+            props.handleFinishTests(state.testResults);
+        }
+    });
 
     return (
         <div className={Classes.DIALOG_BODY}>
@@ -33,87 +51,110 @@ export default function EndpointTests(props: IProps) {
                     style={{ marginLeft: "auto" }}
                     intent="danger"
                     icon="delete"
-                    onClick={handleCancelTests}
+                    onClick={cancelTests}
                     text="Cancel"
                 />
             </div>
             <br />
             <ProgressBar />
             <br />
-            <Callout style={{ height: "250px", overflowY: "scroll" }}>
-                <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                    {/* {[...Array(10)].map((value: number, key: number) => (
-                        <li key={key}>
-                            {operationName} {completeURL}
-                            {parameters?.map((param) => (
-                                param.in === "query" ? (
-                                    `?${param.name}=${generateParam(param)}`
-                                ) : undefined
-                            ))}
-                        </li>
-                    ))} */}
-                </ul>
+            <Callout style={{ height: "250px", overflow: "scroll", padding: 0 }}>
+                <HTMLTable condensed style={{tableLayout: "fixed", width:"100%"}}>
+                    <thead>
+                        <tr>
+                            <StickyTH style={{width:"15%"}}>Operation</StickyTH>
+                            <StickyTH>URL</StickyTH>
+                            <StickyTH style={{width:"15%"}}>Result</StickyTH>
+                        </tr>
+                    </thead>
+                    <tbody >
+                    {state.testResults.map((testResult: ITestResult, key: number) => (
+                        <tr key={key}>
+                            <td>
+                                {testResult.operation.toUpperCase()}
+                            </td>
+                            <td style={{wordBreak: "break-all"}}>
+                                {testResult.url}
+                            </td>
+                            <td style={{
+                                color: testResult.result ? (
+                                    state.darkTheme ? Colors.GREEN5 : Colors.GREEN1
+                                ) : (
+                                        state.darkTheme ? Colors.RED5 : Colors.RED1
+                                    )
+                            }}>
+                                {testResult.result ? "Passed" : "Failed"}
+                            </td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </HTMLTable>
             </Callout>
+            <br/>
+            <Button
+                style={{ marginLeft: "auto" }}
+                intent="success"
+                icon="tick"
+                onClick={() => props.handleFinishTests(state.testResults)}
+                text="Finish"
+            />
         </div>
     )
 }
 
-function runTests(testConfig: ITests, completeURL: string, depth: number = 0) {
-    if (depth === testConfig?.maxTests || cancelTesting) {
-        return;
-    }
-
-    testConfig.art?runART(testConfig, completeURL):runRT(testConfig, completeURL)
-    .then((res) => {
-        if (res) {
-            runTests(testConfig, completeURL, depth+1);
-        }
-    })
-    
-}
-
-function runRT(testConfig: ITests, url: string): Promise<boolean> {
+function runRT(testConfig: ITests, url: string): Promise<ITestResult> {
     const testParams = testConfig.params;
     const globalSettings = JSON.parse(sessionStorage.getItem('settings') as string);
-    
+
     let queryParams = "";
     testParams?.forEach((param: ITestParam) => {
         let generatedValue = generateValue(param, globalSettings);
-        switch(param.in) {
+        switch (param.in) {
             case "query":
                 if (generatedValue !== undefined) {
-                    queryParams += `?${param.name}=${param.value||generatedValue}`;
+                    queryParams += `?${param.name}=${param.value || generatedValue}`;
                 }
                 break;
             case "header":
+                // TODO
                 break;
             case "path":
                 url = url.replace(`{${param.name}}`, generatedValue);
                 break;
             case "formData":
+                // TODO
                 break;
             case "body":
+                // TODO
                 break;
         }
-    })
-    
-    return testEndpoint(`${url}${queryParams}`, testConfig.responses);
-}
-
-function runART(_testConfig: ITests, _url: string): Promise<boolean> {
-    return (new Promise(() => false));
-}
-
-function testEndpoint(url: string, responses: (number|"default")[], header?: any, formData?: any): Promise<boolean>  {
-    url = "https://cors-anywhere.herokuapp.com/" + url;
-    console.log(`Testing ${url}`)
-
-    return fetch(url)
-    .then(res => {
-        let ret = responses.includes(res.status);
-        console.log(ret?"Test Passed":"Test Failed");
-        return ret
     });
+
+    return testEndpoint(`${url}${queryParams}`, testConfig.operation, testConfig.responses);
+}
+
+function runART(_testConfig: ITests, _url: string): Promise<ITestResult> {
+    const testResult: ITestResult = {
+        operation: "",
+        url: "",
+        result: false,
+    }
+    return (new Promise(() => testResult));
+}
+
+function testEndpoint(url: string, method: string, responses: (number | "default")[], header?: any, formData?: any): Promise<ITestResult> {
+    url = "https://cors-anywhere.herokuapp.com/" + url;
+
+    return fetch(url, {
+        method,
+    })
+        .then(res => {
+            return {
+                operation: method,
+                url: url,
+                result: responses.includes(res.status),
+            };
+        });
 }
 
 function generateValue(param: any, valueBounds: any): any {
@@ -128,15 +169,15 @@ function generateValue(param: any, valueBounds: any): any {
         case "number":
             return generateRandomNumber(max, min);
         case "integer":
-            return Math.round(generateRandomNumber(max, min));
+            return generateRandomInteger(max, min);
         case "boolean":
             return generateRandomBoolean();
         case "array":
-            let maxArr = param.max||valueBounds?.maxArr||10;
-            let minArr = param.min||valueBounds?.minArr||0;
+            let maxArr = param.max || valueBounds?.maxArr || 10;
+            let minArr = param.min || valueBounds?.minArr || 0;
 
-            let maxStr = param.max||valueBounds?.maxStr||32;
-            let minStr = param.min||valueBounds?.minStr||0;
+            let maxStr = param.max || valueBounds?.maxStr || 32;
+            let minStr = param.min || valueBounds?.minStr || 0;
 
             return generateRandomArray(maxArr, minArr, maxStr, minStr);
         case "object":
@@ -154,6 +195,10 @@ function generateRandomBoolean(): boolean {
 
 function generateRandomNumber(max: number, min: number): number {
     return Math.random() * (max - min) + min;
+}
+
+function generateRandomInteger(max: number, min: number): number {
+    return Math.round(generateRandomNumber(max, min));
 }
 
 function generateRandomString(max: number, min: number): string {
