@@ -40,7 +40,7 @@ export default function EndpointTests(props: IProps) {
             props.handleFinishTests(state.testResults);
         }
     });
-
+    
     return (
         <div className={Classes.DIALOG_BODY}>
             <div style={{ display: "flex", alignItems: "center" }}>
@@ -143,9 +143,9 @@ function runART(_testConfig: ITests, _url: string): Promise<ITestResult> {
 }
 
 function testEndpoint(url: string, method: string, responses: (number | "default")[], header?: any, formData?: any): Promise<ITestResult> {
-    url = "https://cors-anywhere.herokuapp.com/" + url;
+    let proxyUrl = "https://cors-anywhere.herokuapp.com/" + url;
 
-    return fetch(url, {
+    return fetch(proxyUrl, {
         method,
     })
         .then(res => {
