@@ -88,12 +88,17 @@ export default function EndpointDialog(props: IProps) {
         });
     }
 
+    function handleHandleClose() {
+        handleCancelTests();
+        handleClose();
+    }
+
     return (
         <Dialog
             icon="lab-test"
             title={`Test Endpoint "${props.endpoint}"`}
             isOpen={isOpen}
-            onClose={() => handleClose()}
+            onClose={() => handleHandleClose()}
             className={rehydratedDarkTheme ? Classes.DARK : undefined}
             style={{ width: "600px" }}
         >
