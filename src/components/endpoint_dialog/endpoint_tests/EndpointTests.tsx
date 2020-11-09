@@ -67,7 +67,7 @@ export default function EndpointTests(props: IProps) {
                             <StickyTH style={{ width: "15%" }}>Result</StickyTH>
                         </tr>
                     </thead>
-                    <tbody >
+                    <tbody>
                         {state.testResults.map((testResult: ITestResult, key: number) => (
                             <tr key={key}>
                                 <td>
@@ -171,10 +171,10 @@ function runART(testConfig: ITests, url: string): Promise<ITestResult> {
           artQueryParams += `?${param.name}=${param.value || newVal}`;
         }
         break;
-      case "header":
-        break;
       case "path":
         url = url.replace(`{${param.name}}`, newVal);
+        break;
+      case "header":
         break;
       case "formData":
         break;
@@ -186,15 +186,15 @@ function runART(testConfig: ITests, url: string): Promise<ITestResult> {
   return testEndpoint(`${url}${artQueryParams}`, testConfig.operation, testConfig.responses);
 }
 
-function calcHash(value: string|number) {
+function calcHash(value: string) {
     let hashVal = 0;
-    if (String(value).length === 0) {
+    if (value.length === 0) {
       return hashVal;
     }
     // compare parameter value to array values
     let char;
-    for(let i=0; i<String(value).length; i++) {
-        char = String(value).charCodeAt(i);
+    for(let i=0; i < value.length; i++) {
+        char = value.charCodeAt(i);
         hashVal = ((hashVal << 5) - hashVal) + char;
         hashVal = hashVal & hashVal;
     }
@@ -215,7 +215,8 @@ function compareHash(compareVal: number) {
     })
     return maxHash; // furthest away
 }
-function testEndpoint(url: string, method: string, responses: (number | "default")[], header?: any, formData?: any): Promise<ITestResult> {
+
+function testEndpoint(url: string, method: string, responses: number[], header?: any, formData?: any): Promise<ITestResult> {
     let proxyUrl = "https://cors-anywhere.herokuapp.com/" + url;
 
     return fetch(proxyUrl, {

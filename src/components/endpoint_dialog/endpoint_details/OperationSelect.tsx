@@ -85,7 +85,7 @@ export default function OperationSelect(props: IProps) {
             target: {
                 name: "responses",
                 type: "tags",
-                value: tags.map((tag: ITag) => Number(tag.value)||"default"),
+                value: tags.map((tag: ITag) => Number(tag.value)),
               }
         })
     }

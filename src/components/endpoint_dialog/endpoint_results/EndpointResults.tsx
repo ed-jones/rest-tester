@@ -44,7 +44,7 @@ export default function EndpointResults(props: IProps) {
                             <StickyTH>URL</StickyTH>
                         </tr>
                     </thead>
-                    <tbody >
+                    <tbody>
                     {props.results.filter((result) => !result.result)
                     .map((testResult: ITestResult, key: number) => (
                         <tr key={key}>

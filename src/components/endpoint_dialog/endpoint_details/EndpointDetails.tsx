@@ -1,18 +1,7 @@
 import React, { useState } from 'react'
 import {
-  ControlGroup,
-  InputGroup,
-  Classes,
-  Callout,
-  HTMLTable,
-  Switch,
-  Button,
-  Tabs,
-  Tab,
-  Card,
-  Alignment,
-  Label,
-  NumericInput,
+  ControlGroup, InputGroup, Classes, Callout, HTMLTable, Switch, Button,
+  Tabs, Tab, Card, Alignment, Label, NumericInput,
 } from "@blueprintjs/core";
 import { IPathItem, IParameter, IOperation, IOperationVerb } from '@interfaces/Swagger';
 import { OperationIntentHashMap } from '@components/home/EndpointCard';
@@ -79,7 +68,7 @@ export function EndpointDetail(props: EndpointDetailProps) {
       required: value?.required,
     })),
     responses: Object.values(operationObj.responses)
-      .map((_response: any, index: number) => (Number(Object.keys(operationObj.responses)[index])||"default")),
+      .map((_response: any, index: number) => (Number(Object.keys(operationObj.responses)[index]))),
   }
 
   let [state, setState] = useState(defaultState);

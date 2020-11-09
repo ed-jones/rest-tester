@@ -18,7 +18,7 @@ export interface ITests {
     abortOnFail: boolean,
     maxTests?: number,
     params?: Array<ITestParam>,
-    responses: (number|"default")[],
+    responses: (number)[],
 }
 
 export interface ITestParam {
@@ -65,7 +65,7 @@ export default function EndpointDialog(props: IProps) {
         panel: EndpointDetailsPanel(props, handleRunTests),
     });
 
-    let rehydratedDarkTheme = sessionStorage.getItem("darkTheme") === 'true' || false;
+    let rehydratedDarkTheme = sessionStorage.getItem("darkTheme") === 'true';
 
     function handleRunTests(testConfig: ITests) {
         setState({

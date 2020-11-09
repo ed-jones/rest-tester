@@ -19,7 +19,7 @@ export default function SwaggerInput() {
         SwaggerParser.validate(state.schemaURL)
             .then(e => {
                 Toaster.show({
-                    message: "Successfully Validated",
+                    message: "Successfully Loaded API",
                     intent: "success",
                     icon: "tick-circle"
                 });
@@ -51,13 +51,11 @@ export default function SwaggerInput() {
                             value={state.schemaURL}
                             onChange={handleChange}
                             fill
-                            intent={state.error ? "danger" : state.schema !== undefined ? "success" : "none"}
                         />
                         <Button
                             intent="success"
                             loading={state.loading}
-                            text="Validate"
-                            icon="tick"
+                            text="Load API"
                             type="submit"
                         />
                     </ControlGroup>
