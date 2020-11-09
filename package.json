@@ -6,6 +6,7 @@
     "@apidevtools/swagger-parser": "^10.0.2",
     "@blueprintjs/core": "^3.31.0",
     "@blueprintjs/select": "^3.13.7",
+    "@brianmcallister/react-auto-scroll": "^1.1.0",
     "@craco/craco": "^5.6.4",
     "@emotion/core": "^10.0.35",
     "@emotion/styled": "^10.0.27",

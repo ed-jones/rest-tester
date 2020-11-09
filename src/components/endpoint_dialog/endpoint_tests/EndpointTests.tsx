@@ -4,6 +4,7 @@ import { IPathItem } from '@interfaces/Swagger';
 import { ITests, ITestParam, ITestResult } from '../EndpointDialog';
 import levenshtein from 'js-levenshtein';
 import styled from '@emotion/styled';
+import AutoScroll from '@brianmcallister/react-auto-scroll';
 
 interface IProps {
     handleCancelTests: any,
@@ -71,36 +72,38 @@ export default function EndpointTests(props: IProps) {
             <ProgressBar />
             <br />
             <Callout style={{ height: "250px", overflow: "scroll", padding: 0 }}>
-                <HTMLTable condensed style={{ tableLayout: "fixed", width: "100%" }}>
-                    <thead>
-                        <tr>
-                            <StickyTH style={{ width: "15%" }}>Operation</StickyTH>
-                            <StickyTH>URL</StickyTH>
-                            <StickyTH style={{ width: "15%" }}>Result</StickyTH>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {state.testResults.map((testResult: ITestResult, key: number) => (
-                            <tr key={key}>
-                                <td>
-                                    {testResult.operation.toUpperCase()}
-                                </td>
-                                <td style={{ wordBreak: "break-all" }}>
-                                    {testResult.url}
-                                </td>
-                                <td style={{
-                                    color: testResult.result ? (
-                                        state.darkTheme ? Colors.GREEN5 : Colors.GREEN1
-                                    ) : (
-                                            state.darkTheme ? Colors.RED5 : Colors.RED1
-                                        )
-                                }}>
-                                    {testResult.result ? "Passed" : "Failed"}
-                                </td>
+                <AutoScroll scrollBehavior='smooth' showOption={false} height={250}>
+                    <HTMLTable condensed style={{ tableLayout: "fixed", width: "100%" }}>
+                        <thead>
+                            <tr>
+                                <StickyTH style={{ width: "15%" }}>Operation</StickyTH>
+                                <StickyTH>URL</StickyTH>
+                                <StickyTH style={{ width: "15%" }}>Result</StickyTH>
                             </tr>
-                        ))}
-                    </tbody>
-                </HTMLTable>
+                        </thead>
+                        <tbody>
+                            {state.testResults.map((testResult: ITestResult, key: number) => (
+                                <tr key={key}>
+                                    <td>
+                                        {testResult.operation.toUpperCase()}
+                                    </td>
+                                    <td style={{ wordBreak: "break-all" }}>
+                                        {testResult.url}
+                                    </td>
+                                    <td style={{
+                                        color: testResult.result ? (
+                                            state.darkTheme ? Colors.GREEN5 : Colors.GREEN1
+                                        ) : (
+                                                state.darkTheme ? Colors.RED5 : Colors.RED1
+                                            )
+                                    }}>
+                                        {testResult.response}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </HTMLTable>
+                </AutoScroll>
             </Callout>
             <br />
             <Button
@@ -148,6 +151,7 @@ function testEndpoint(url: string, method: string, responses: number[], header?:
                 operation: method,
                 url: url,
                 result: responses.includes(res.status),
+                response: `${String(res.status)} ${res.statusText}`
             };
         });
 }

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ITestResult } from '../EndpointDialog';
 import { Classes, HTMLTable, Colors, Callout, Button } from '@blueprintjs/core';
 import styled from '@emotion/styled';
+import AutoScroll from '@brianmcallister/react-auto-scroll';
 
 interface IProps {
     results: ITestResult[],
@@ -32,20 +33,22 @@ export default function EndpointResults(props: IProps) {
                     text="Done"
                 />
             </div>
-            Ran {props.results?.length} tests.
             <p>
-            The following tests failed:
+                Ran {props.results?.length} tests.
             </p>
-            <Callout style={{ height: "250px", overflow: "scroll", padding: 0 }}>
+            <br/>
+            <Callout id="results" style={{ height: "250px", overflow: "scroll", padding: 0 }}>
+            <AutoScroll scrollBehavior='smooth' showOption={false} height={250}>
                 <HTMLTable condensed style={{tableLayout: "fixed", width:"100%"}}>
                     <thead>
                         <tr>
-                            <StickyTH style={{width:"20%"}}>Operation</StickyTH>
+                            <StickyTH style={{width: "15%" }}>Operation</StickyTH>
                             <StickyTH>URL</StickyTH>
+                            <StickyTH style={{ width: "20%" }}>Result</StickyTH>
                         </tr>
                     </thead>
                     <tbody>
-                    {props.results.filter((result) => !result.result)
+                    {props.results
                     .map((testResult: ITestResult, key: number) => (
                         <tr key={key}>
                             <td>
@@ -54,10 +57,18 @@ export default function EndpointResults(props: IProps) {
                             <td style={{wordBreak: "break-all"}}>
                                 {testResult.url}
                             </td>
+                            <td style={{color: testResult.result ? (
+                                        state.darkTheme ? Colors.GREEN5 : Colors.GREEN1
+                                    ) : (
+                                            state.darkTheme ? Colors.RED5 : Colors.RED1
+                                    )}}>
+                                {testResult.response}
+                            </td>
                         </tr>
                     ))}
                     </tbody>
                 </HTMLTable>
+                </AutoScroll>
             </Callout>
         </div>
     )

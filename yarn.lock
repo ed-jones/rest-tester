@@ -1149,6 +1149,13 @@
     classnames "^2.2"
     tslib "~1.13.0"
 
+"@brianmcallister/react-auto-scroll@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@brianmcallister/react-auto-scroll/-/react-auto-scroll-1.1.0.tgz#4b306c5d9e90c2cae575956dac0546beccab3ffc"
+  integrity sha512-2oMdyFbm73nPHwalHNTUEOr/KmuXPxqWhgOGQG7vgIkldExK2ibw7QycjNoNpA+XYD7wDI/BsGXO71A720jCFg==
+  dependencies:
+    classnames "^2"
+
 "@cnakazawa/watch@^1.0.3":
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@cnakazawa/watch/-/watch-1.0.4.tgz#f864ae85004d0fcab6f50be9141c4da368d1656a"
@@ -3151,7 +3158,7 @@ class-utils@^0.3.5:
     isobject "^3.0.0"
     static-extend "^0.1.1"
 
-classnames@^2.2:
+classnames@^2, classnames@^2.2:
   version "2.2.6"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.6.tgz#43935bffdd291f326dad0a205309b38d00f650ce"
   integrity sha512-JR/iSQOSt+LQIWwrwEzJ9uk0xfN3mTVYMwt1Ir5mUcSN6pU+V4zQFFaJsclJbPuAUQH+yfWef6tm7l1quW3C8Q==

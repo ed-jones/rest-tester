@@ -36,6 +36,7 @@ export interface ITestResult {
     operation: string,
     url: string,
     result: boolean,
+    response: string,
 }
 
 const EndpointDetailsPanel = (props: IProps, handleRunTests: any) => (

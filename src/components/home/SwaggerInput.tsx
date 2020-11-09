@@ -53,7 +53,7 @@ export default function SwaggerInput() {
                             fill
                         />
                         <Button
-                            intent="success"
+                            intent="primary"
                             loading={state.loading}
                             text="Load API"
                             type="submit"
