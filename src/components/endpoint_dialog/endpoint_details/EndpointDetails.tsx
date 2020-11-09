@@ -58,7 +58,7 @@ export function EndpointDetail(props: EndpointDetailProps) {
     operation: operationName,
     art: false,
     abortOnFail: false,
-    params: (operationObj.parameters as [IParameter]).map((value: IParameter) => ({
+    params: (operationObj.parameters as [IParameter])?.map((value: IParameter) => ({
       name: value.name,
       random: true,
       in: value.in,
