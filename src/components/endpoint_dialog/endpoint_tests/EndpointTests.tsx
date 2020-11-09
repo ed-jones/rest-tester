@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Classes, ProgressBar, Button, Callout, HTMLTable, Colors } from "@blueprintjs/core";
 import { IPathItem } from '@interfaces/Swagger';
 import { ITests, ITestParam, ITestResult } from '../EndpointDialog';
+import levenshtein from 'js-levenshtein';
 import styled from '@emotion/styled';
 
 interface IProps {
@@ -12,6 +13,17 @@ interface IProps {
     baseURL: string,
     testConfig: ITests,
 }
+
+interface ISettings {
+    minNum: number
+    maxNum: number
+    maxArr: number
+    minArr: number
+    maxStr: number
+    minStr: number
+}
+
+const settings: ISettings = JSON.parse(sessionStorage.getItem('settings') as string);
 
 export default function EndpointTests(props: IProps) {
     const emptyResults: ITestResult[] = [];
@@ -31,7 +43,7 @@ export default function EndpointTests(props: IProps) {
 
     let completeURL = `${props.baseURL}${props.endpoint}`;
 
-    props.testConfig.art ? runART(props.testConfig, completeURL) : runRT(props.testConfig, completeURL)
+    runTests(props.testConfig, completeURL, props.testConfig.art)
         .then((res: ITestResult) => {
             let testResults = state.testResults;
             testResults.push(res);
@@ -102,118 +114,27 @@ export default function EndpointTests(props: IProps) {
     )
 }
 
-function runRT(testConfig: ITests, url: string): Promise<ITestResult> {
-    const testParams = testConfig.params;
-    const globalSettings = JSON.parse(sessionStorage.getItem('settings') as string);
-
+function runTests(testConfig: ITests, url: string, art: boolean): Promise<ITestResult> {
     let queryParams = "";
-    testParams?.forEach((param: ITestParam) => {
-        let generatedValue = generateValue(param, globalSettings);
-        switch (param.in) {
+
+    testConfig.params?.forEach((param: ITestParam) => {
+        let generatedValue = generateValue(param, art);
+        switch(param.in) {
             case "query":
-                if (generatedValue !== undefined) {
+                if (generatedValue) {
                     queryParams += `?${param.name}=${param.value || generatedValue}`;
                 }
                 break;
-            case "header":
-                // TODO
-                break;
             case "path":
-                url = url.replace(`{${param.name}}`, generatedValue);
-                break;
-            case "formData":
-                // TODO
-                break;
-            case "body":
-                // TODO
-                break;
+              url = url.replace(`{${param.name}}`, generatedValue);
+              break;
+            // case "header":
+            // case "formData":
+            // case "body":
         }
     });
 
     return testEndpoint(`${url}${queryParams}`, testConfig.operation, testConfig.responses);
-}
-
-// function runART(_testConfig: ITests, _url: string): Promise<ITestResult> {
-//     const testResult: ITestResult = {
-//         operation: "",
-//         url: "",
-//         result: false,
-//     }
-//     return (new Promise(() => testResult));
-// }
-
-
-let artArray: any[] = []; // empty array to be populated
-
-function runART(testConfig: ITests, url: string): Promise<ITestResult> {
-  const artTestParams = testConfig.params; // stores the parameters from the user
-  const artGlobalSettings = JSON.parse(sessionStorage.getItem("settings") as string);   // gets the settings from the links
-
-  let artQueryParams = ""; // empty string
-  artTestParams?.forEach((param: ITestParam) => {   // loop for each test param
-    let genVal = generateValue(param, artGlobalSettings);   // generates a random value based off the global settings
-    
-    let hash = calcHash(genVal);
-    artArray.push(
-        {"key": genVal, "value": hash}
-    );  // push random val along with hash value to the array
-    
-    // compare the distance between non numeric vals
-    // generate new value based off array
-    let newVal = generateValue({
-        ...param,
-        value: String(compareHash(hash)),
-    }, artGlobalSettings);
-
-    switch (param.in) {
-      case "query":
-        if (newVal !== undefined) {
-          artQueryParams += `?${param.name}=${param.value || newVal}`;
-        }
-        break;
-      case "path":
-        url = url.replace(`{${param.name}}`, newVal);
-        break;
-      case "header":
-        break;
-      case "formData":
-        break;
-      case "body":
-        break;
-    }
-  });
-
-  return testEndpoint(`${url}${artQueryParams}`, testConfig.operation, testConfig.responses);
-}
-
-function calcHash(value: string) {
-    let hashVal = 0;
-    if (value.length === 0) {
-      return hashVal;
-    }
-    // compare parameter value to array values
-    let char;
-    for(let i=0; i < value.length; i++) {
-        char = value.charCodeAt(i);
-        hashVal = ((hashVal << 5) - hashVal) + char;
-        hashVal = hashVal & hashVal;
-    }
-
-    return hashVal;
-}
-
-function compareHash(compareVal: number) {
-    let currentHash = compareVal;
-    let maxHash = 0;
-    let index = Object.keys(artArray)[1];   // hash
-    artArray.forEach(val => {
-        if(currentHash >= val[index]) {
-            maxHash = currentHash;
-        } else {
-            maxHash = val[index];
-        }
-    })
-    return maxHash; // furthest away
 }
 
 function testEndpoint(url: string, method: string, responses: number[], header?: any, formData?: any): Promise<ITestResult> {
@@ -231,68 +152,133 @@ function testEndpoint(url: string, method: string, responses: number[], header?:
         });
 }
 
-function generateValue(param: ITestParam, valueBounds: any): any {
-    if (!param.required && generateRandomBoolean()) {
+interface keyval {
+  key: string
+  value: any
+};
+
+let artArray: keyval[] = [];
+
+function generateValue(param: ITestParam, art: boolean): any {
+    // If param not required, generate no value 50% of the time
+    if (!param.required && (new ParamBoolean()).random()) {
         return;
     }
-
-    let max = param.max || valueBounds?.maxNum || 1000000;
-    let min = param.min || valueBounds?.minNum || -1000000;
-
-    switch (param.type) {
-        case "number":
-            return generateRandomNumber(max, min);
-        case "integer":
-            return generateRandomInteger(max, min);
-        case "boolean":
-            return generateRandomBoolean();
-        case "array":
-            let maxArr = param.max || valueBounds?.maxArr || 10;
-            let minArr = param.min || valueBounds?.minArr || 0;
-
-            let maxStr = param.max || valueBounds?.maxStr || 32;
-            let minStr = param.min || valueBounds?.minStr || 0;
-
-            return generateRandomArray(maxArr, minArr, maxStr, minStr);
-        case "object":
-            return; // !TODO
-        default:
-            max = param.max || valueBounds?.maxStr || 32;
-            min = param.min || valueBounds?.minStr || 0;
-            return generateRandomString(max, min);
+    // Create a parameter object
+    let paramObj = ParamType.create(param);
+    // Return new value
+    if (art) {
+        let value: any;
+        let paramNameArray = artArray.filter((element: keyval) => element.key === param.name);
+        if (paramNameArray.length === 0) {
+            value = paramObj.random();
+        } else {
+            let maxDistance = 0;
+            for (let i=0; i < 10; i++) {
+                let candidate = paramObj.random();
+                let minDistance: number = Infinity;
+                paramNameArray.forEach((element: keyval) => {
+                    let newDistance = paramObj.distance(element.value, candidate);
+                    if (minDistance === undefined || newDistance < minDistance) {
+                        minDistance = newDistance;
+                    }
+                });
+                if (minDistance > maxDistance) {
+                    value = candidate;
+                    maxDistance = minDistance;
+                }
+            }
+        }
+        artArray.push({key: param.name, value});
+        return value;
+    } else {
+        return paramObj.random();
     }
 }
 
-function generateRandomBoolean(): boolean {
-    return Math.round(Math.random()) === 1;
-}
+abstract class ParamType {
+    abstract random(): any;
+    abstract distance(a: any, b: any): number;
 
-function generateRandomNumber(max: number, min: number): number {
-    return Math.random() * (max - min) + min;
-}
-
-function generateRandomInteger(max: number, min: number): number {
-    return Math.round(generateRandomNumber(max, min));
-}
-
-function generateRandomString(max: number, min: number): string {
-    let randomLength = generateRandomNumber(max, min);
-    let randomString = "";
-    [...Array(Math.round(randomLength))].forEach(() => {
-        randomString += generateRandomChar();
-    })
-    return randomString;
-}
-
-function generateRandomChar(): string {
-    return Math.random().toString(36).substr(2, 1);
-}
-
-function generateRandomArray(maxArr: number, minArr: number, maxStr: number, minStr: number): string[] {
-    let randomLength = generateRandomNumber(maxArr, minArr);
-    let arr = [];
-    for (let i = 0; i < randomLength; i++) {
-        arr.push(generateRandomString(maxStr, minStr));
+    static create(param: ITestParam): ParamType {
+        switch(param.type) {
+            case "number":
+                return new ParamNumber(param.max, param.min);
+            case "integer":
+                return new ParamInteger(param.max, param.min);
+            case "boolean":
+                return new ParamBoolean();
+            // case "array":
+            //     return (new ParamArray(param.max, param.min)).random();
+            // case "object":
+            //     return; // !TODO
+            default:
+                return new ParamString(param.max, param.min);
+            }
     }
-    return arr;
+}
+
+class ParamNumber extends ParamType {
+    max: number;
+    min: number;
+
+    constructor(paramMax: number|undefined, paramMin: number|undefined) {
+        super();
+        this.max = paramMax || settings?.maxNum || 1000000;
+        this.min = paramMin || settings?.minNum || -1000000;
+    }
+
+    random(): number {
+        return Math.random() * (this.max - this.min) + this.min;
+    }
+
+    distance(a: any, b: any): number {
+        return Math.abs(a as number - b as number)
+    }
+}
+
+class ParamInteger extends ParamNumber {
+    random(): number {
+        return Math.round(super.random());
+    }
+}
+
+class ParamBoolean extends ParamType {
+    random(): boolean {
+        return Math.round(Math.random()) === 1;
+    }
+
+    distance(a: any, b: any): number {
+        return a as boolean===b as boolean?0:1;
+    }
+}
+
+class ParamChar extends ParamType {
+    random(): string {
+        return Math.random().toString(36).substr(2, 1);
+    }
+
+    distance(a: any, b: any): number {
+        return levenshtein(a as string, b as string);
+    }
+}
+
+class ParamString extends ParamChar {
+    min: number;
+    max: number;
+
+    constructor(paramMax: number|undefined, paramMin: number|undefined) {
+        super();
+        this.max = paramMax || settings?.maxNum || 32;
+        this.min = paramMin || settings?.minNum || 0;
+    }
+
+    random(): string {
+        let randomLength = Math.round(Math.random() * (this.max - this.min) + this.min);
+        let randomString = "";
+        [...Array(randomLength)].forEach(() => {
+            randomString += super.random();
+        })
+        return randomString;
+    }
 }
