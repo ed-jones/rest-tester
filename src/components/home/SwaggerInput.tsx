@@ -8,7 +8,7 @@ import EndpointCard from './EndpointCard';
 export default function SwaggerInput() {
     let defaultSchema: ISwagger|undefined;
     let [state, setState] = useState({
-        schemaURL: "https://api.apis.guru/v2/specs/bbc.co.uk/1.0.0/swagger.yaml",
+        schemaURL: "",
         schema: defaultSchema,
         error: false,
         loading: false,

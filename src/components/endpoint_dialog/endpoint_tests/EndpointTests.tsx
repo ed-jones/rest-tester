@@ -48,10 +48,10 @@ export default function EndpointTests(props: IProps) {
         .then((res: ITestResult) => {
             let testResults = state.testResults;
             testResults.push(res);
-            setState({ ...state, testResults });
             if ((!res.result && props.testConfig.abortOnFail) || state.testResults.length === props.testConfig?.maxTests) {
                 props.handleFinishTests(state.testResults);
             }
+            setState({ ...state, testResults });
         });
 
     return (

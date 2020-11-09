@@ -121,7 +121,7 @@ export default function Settings(props: IProps) {
                         </ItemRight>
                     </Item>
                     <br />
-                    <Item>
+                    {/* <Item>
                         <Label>Array Max Length</Label>
                         <ItemRight>
                             <NumericInput
@@ -142,7 +142,7 @@ export default function Settings(props: IProps) {
                                 value={state.minArr}
                             />
                         </ItemRight>
-                    </Item>
+                    </Item> */}
                     <br />
                     <Item>
                         <ItemRight>
