@@ -9,7 +9,7 @@ interface IProps {
 }
 
 export interface ITag {
-    value: number|"default",
+    value: number,
     intent: Intent,
     description: string,
 }
@@ -18,14 +18,14 @@ export default function OperationSelect(props: IProps) {
     let defaultState: { items: ITag[], tags: ITag[] } = {
         items: responses.map((response: any) => (
             {
-                value: Number(response.value)||"default",
+                value: Number(response.value),
                 intent: getTagIntent(Number(response.value)),
                 description: String(response.description),
             }
         )),
         tags: Object.values(props.responses).map((response: any, index: number) => (
             {
-                value: Number(Object.keys(props.responses)[index])||"default",
+                value: Number(Object.keys(props.responses)[index]),
                 intent: getTagIntent(Number(Object.keys(props.responses)[index])),
                 description: String(response.description),
             }

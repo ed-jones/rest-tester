@@ -145,7 +145,7 @@ function runRT(testConfig: ITests, url: string): Promise<ITestResult> {
 
 let artArray: any[] = []; // empty array to be populated
 
-function runART(testConfig: ITests, url: string): Promise<ITestResult> {  // art func
+function runART(testConfig: ITests, url: string): Promise<ITestResult> {
   const artTestParams = testConfig.params; // stores the parameters from the user
   const artGlobalSettings = JSON.parse(sessionStorage.getItem("settings") as string);   // gets the settings from the links
 

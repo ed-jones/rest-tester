@@ -162,8 +162,8 @@ export function EndpointDetail(props: EndpointDetailProps) {
                         <thead>
                           <tr>
                             <th>Name</th>
-                            <td>Value</td>
                             <td>Random</td>
+                            <td>Value</td>
                           </tr>
                         </thead>
                         <tbody>
@@ -174,19 +174,21 @@ export function EndpointDetail(props: EndpointDetailProps) {
                               return (
                                 <tr key={index}>
                                   <td>{param.name}</td>
+                                  <td style={{ textAlign: 'center' }}>
+                                    <Switch
+                                      name="random"
+                                      innerLabel="Chosen"
+                                      innerLabelChecked="Random"
+                                      defaultChecked
+                                      onChange={(e: any) => handleChange(e, paramIndex)}
+                                    />
+                                  </td>
                                   <td>
                                     <InputGroup
                                       name="value"
                                       type="text"
                                       placeholder={param.type || "unknown"}
                                       disabled={state.params?.[paramIndex].random}
-                                      onChange={(e: any) => handleChange(e, paramIndex)}
-                                    />
-                                  </td>
-                                  <td style={{ textAlign: 'center' }}>
-                                    <Switch
-                                      name="random"
-                                      defaultChecked
                                       onChange={(e: any) => handleChange(e, paramIndex)}
                                     />
                                   </td>
